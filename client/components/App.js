@@ -10,36 +10,13 @@ class App extends React.Component {
       password: ''
     }
   }
-  onRegister = (e) => {
-    e.preventDefault()
-
-    const info = {username: this.state.username, password: this.state.password}
-
-    axios.post('/register', info)
-    .then( () => this.props.history.push('/registersuccess'))
-    .catch( () => console.log('error'));
-
-  }
-  onUserChange = (e) => {
-    const username = e.target.value
-
-    this.setState( () => ({username}))
-  }
-  onPassChange = (e) => {
-    const password = e.target.value
-
-    this.setState( () => ({password}))
-  }
   render() {
     return (
       <div>
         <h1>Test!!!s</h1>
-        <a href='/test'>test</a>
-        <form onSubmit={this.onRegister}>
-          <input type='text' placeholder='username' value={this.state.username} onChange={this.onUserChange} />
-          <input type='password' placeholder='password' value={this.state.password} onChange={this.onPassChange} />
-          <button>Register</button>
-        </form>
+        <a href='/register'>Register</a>
+        <a href='/login'>Login</a>
+        <a href='/createpost'>Create post</a>
       </div>
     )
   }
