@@ -1,6 +1,8 @@
 var path = require('path');
 var webpack = require('webpack');
 
+const isProduction = false;
+
 module.exports = {
  entry: './client/app.js',
  output: {
@@ -17,5 +19,6 @@ module.exports = {
    test: /\.css$/,
    loader: "style-loader!css-loader"
   }]
- }
+},
+devtool: isProduction ? 'source-map' : 'inline-source-map'
 }

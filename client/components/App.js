@@ -17,6 +17,7 @@ class App extends React.Component {
         <a href='/register'>Register</a>
         <a href='/login'>Login</a>
         <a href='/createpost'>Create post</a>
+        <a href='/createsubtidder'>Create subtidder</a>
       </div>
     )
   }

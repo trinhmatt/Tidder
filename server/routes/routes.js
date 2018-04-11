@@ -21,4 +21,12 @@ router.post('/register', (req, res) => {
   })
 })
 
+router.post('/login', passport.authenticate('local',{
+  successRedirect:'/',
+  failureRedirect:'/login'
+}), (req, res) => {
+  console.log(req.user)
+  res.send('eyoooooo')
+});
+
 module.exports = router;
