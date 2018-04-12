@@ -13,7 +13,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>Test!!!s</h1>
+        <h1>Test!!!</h1>
         <a href='/register'>Register</a>
         <a href='/login'>Login</a>
         <a href='/createpost'>Create post</a>

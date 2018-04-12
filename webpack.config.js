@@ -5,6 +5,7 @@ const isProduction = false;
 
 module.exports = {
  entry: './client/app.js',
+ mode: 'development',
  output: {
   path: path.join(__dirname, 'client'),
   filename: 'bundle.js'

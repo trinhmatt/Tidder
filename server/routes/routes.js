@@ -21,6 +21,7 @@ router.post('/register', (req, res) => {
   })
 })
 
+//Cannot use redirect here, all routes are handled on the client
 router.post('/login', passport.authenticate('local'), (req, res) => {
   const user = {
     username: req.user.username,

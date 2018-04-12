@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { startLogin } from '../../store/actions/auth'
 
 class Login extends React.Component {
@@ -48,6 +49,7 @@ class Login extends React.Component {
           />
           <button>Login</button>
         </form>
+        <Link to='/'>Home</Link>
       </div>
     )
   }
