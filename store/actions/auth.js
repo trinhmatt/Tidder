@@ -1,4 +1,11 @@
 import axios from 'axios'
+import React from 'react'
+
+export const login = (id, username) => ({
+  type: 'LOGIN',
+  id,
+  username
+})
 
 export const startLogin = (username, password) => {
   return (dispatch) => {
@@ -6,7 +13,11 @@ export const startLogin = (username, password) => {
       username: username,
       password: password
     })
-    .then( (response) => console.log(response))
+    .then( (response) => {
+      const username = response.data.username,
+            id = response.data.id
+      dispatch(login(id, username))
+    })
     .catch( () => console.log('login failed'))
   }
 }

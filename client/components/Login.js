@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { startLogin } from '../../store/actions/auth'
 
 class Login extends React.Component {
@@ -24,9 +25,9 @@ class Login extends React.Component {
     e.preventDefault();
 
     const username = this.state.username,
-          password = this.state.password
+          password = this.state.password;
 
-    startLogin(username, password)
+    this.props.startLogin(username, password)
   }
   render() {
     return (
@@ -52,4 +53,8 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  startLogin: (email, password) => dispatch(startLogin(email, password))
+})
+
+export default connect(undefined, mapDispatchToProps)(Login);

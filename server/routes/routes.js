@@ -21,12 +21,13 @@ router.post('/register', (req, res) => {
   })
 })
 
-router.post('/login', passport.authenticate('local',{
-  successRedirect:'/',
-  failureRedirect:'/login'
-}), (req, res) => {
-  console.log(req.user)
-  res.send('eyoooooo')
+router.post('/login', passport.authenticate('local'), (req, res) => {
+  const user = {
+    username: req.user.username,
+    id: req.user._id
+  }
+
+  res.send(user)
 });
 
 module.exports = router;

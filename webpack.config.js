@@ -20,5 +20,5 @@ module.exports = {
    loader: "style-loader!css-loader"
   }]
 },
-devtool: isProduction ? 'source-map' : 'inline-source-map'
+  devtool: isProduction ? 'source-map' : 'inline-source-map'
 }

@@ -4,7 +4,7 @@ export default (state = {}, action) => {
   switch (action.type) {
     case 'LOGIN':
       return {
-        displayName: action.displayName,
+        username: action.username,
         id: action.id
       }
     case 'LOGOUT':
