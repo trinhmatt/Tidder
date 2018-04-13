@@ -4,6 +4,17 @@ const passport = require('passport');
 
 import User from '../../models/user'
 
+
+// To get the currentUser data from backend
+// All GET routes must be declared before the catch all to ensure they get priority
+router.get('/currentuser', (req, res) => {
+  if (!req.user) {
+    res.send(null)
+  } else {
+    res.send(req.user)
+  }
+})
+
 router.get('*', (req, res) => {
   res.render('index')
 });
@@ -30,5 +41,6 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 
   res.send(user)
 });
+
 
 module.exports = router;
