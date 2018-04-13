@@ -1,4 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import axios from 'axios'
+import { startCreateSub } from '../../store/actions/create'
 
 
 class CreateSubtidder extends React.Component {
@@ -17,15 +20,34 @@ class CreateSubtidder extends React.Component {
 
     this.setState( () => ({ageRestricted}))
   }
-  createSubtidder = () => {
-    const subtidder = {
+  onNameChange = (e) => {
+    const name = e.target.value
+
+    this.setState( () => ({name}))
+  }
+  onDescChange = (e) => {
+    const desc = e.target.value
+
+    this.setState( () => ({desc}))
+  }
+  createSubtidder = (e) => {
+    e.preventDefault();
+
+    const sub = {
       name: this.state.name,
       description: this.state.desc,
       ageRestricted: this.state.ageRestricted,
-      mods: [{
-        id: this.state.id
-      }]
+      mods: [],
+      admin: this.props.auth.id
     }
+
+    axios.post('/createsubtidder', sub)
+      .then( () => {
+        this.props.history.push('/createsubtidder/success')
+      })
+      .catch( () => {
+        this.props.history.push('/createsubtidder/fail')
+      })
   }
   render() {
     return (
@@ -37,6 +59,7 @@ class CreateSubtidder extends React.Component {
             placeholder='subtidder name'
             value={this.state.name}
             onChange={this.onNameChange}
+            required
           />
           <input
             type='textarea'
@@ -46,8 +69,14 @@ class CreateSubtidder extends React.Component {
           />
           <div>
             <label>Age restricted?</label>
-            <input type='radio' value={true} onClick={this.onRestrictSelect} />
-            <input type='radio' value={false} onClick={this.onRestrictSelect} />
+            <div>
+              <input type='radio' value={true} onClick={this.onRestrictSelect} />
+              <label>Yes</label>
+            </div>
+            <div>
+              <input type='radio' value={false} onClick={this.onRestrictSelect} />
+              <label>No</label>
+            </div>
           </div>
           <button>Create</button>
         </form>
@@ -55,3 +84,9 @@ class CreateSubtidder extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  auth: state.auth
+})
+
+export default connect(mapStateToProps)(CreateSubtidder);

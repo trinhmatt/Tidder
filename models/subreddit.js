@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'),
       passportLocalMongoose = require('passport-local-mongoose');
 
-const SubtidderSchema = new mongoose.Schema({
+const SubSchema = new mongoose.Schema({
   name: String,
   description: String,
   posts: [
@@ -12,15 +12,17 @@ const SubtidderSchema = new mongoose.Schema({
   ],
   mods: [
     {
-      id: {
-        type: mongoose.Schema.Types.ObjectId.
-        ref: 'User'
-      }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     }
   ],
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   ageRestricted: Boolean
 })
 
-Subtidder.plugin(passportLocalMongoose);
+SubSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('Subtidder', SubtidderSchema);
+module.exports = mongoose.model('Sub', SubSchema);

@@ -29,10 +29,9 @@ const authDispatch = () => {
     .then( (response) => {
       //Check if user is logged in, if yes => dispatch logIn action
       if (response.data) {
-        const id = response.data._id,
-              username = response.data.username;
+        const user = response.data
 
-        store.dispatch(login(id, username))
+        store.dispatch(login(user))
       }
     })
     .catch( (error) => {
