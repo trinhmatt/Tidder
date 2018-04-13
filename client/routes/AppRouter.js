@@ -8,6 +8,7 @@ import RegisterSuccess from '../components/RegisterSuccess'
 import CreateSubtidder from '../components/CreateSubtidder'
 import CreateSubSuccess from '../components/CreateSubSuccess'
 import CreateSubFail from '../components/CreateSubFail'
+import SubHome from '../components/SubHome'
 
 export const history = createHistory()
 
@@ -15,6 +16,7 @@ export const AppRouter = () => (
   <Router history={history}>
     <Switch>
       <Route path='/' component={Home} exact={true} />
+      <Route path='/t/:sub' component={SubHome} />
       <Route path='/login' component={Login} />
       <Route path='/register' component={Register} exact={true} />
       <Route path='/registersuccess' component={RegisterSuccess} />

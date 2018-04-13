@@ -23,14 +23,43 @@ router.get('/currentuser', (req, res) => {
   }
 })
 
-router.get('/*', (req, res) => {
-  res.render('index')
+//To send the sub information to the client
+//Made it a post so that you can directly go to a sub home without navigating from the main page
+router.post('/t/:sub', (req, res) => {
+  Sub.findOne({name: req.params.sub}, (err, sub) => {
+    if (!err) {
+      res.send(sub)
+    } else {
+      console.log(err)
+    }
+  })
+})
+
+//To subscribe to a sub
+router.post('/subscribe/:id', (req, res) => {
+  const sub = req.body;
+
+  User.findById(req.params.id, (err, foundUser) => {
+    if (!err) {
+      foundUser.subs.push(sub)
+      foundUser.save()
+      res.render('index')
+    }
+  })
+})
+
+
+router.get('*', (req, res) => {
+  res.render('index');
 });
+
+
+
 
 //Create user
 router.post('/register', (req, res) => {
   const username = new User({username: req.body.username, subs: []}),
-      password = req.body.password;
+        password = req.body.password;
   User.register(username, password, (err, user) => {
     if (err){
       console.log(err)
@@ -43,21 +72,16 @@ router.post('/register', (req, res) => {
 
 //Create subreddit
 router.post('/createsubtidder', (req, res) => {
-  const sub = req.body;
 
-  Sub.create(sub, (err, newSub) => {
-    if (err) {
-      console.log(err)
-    } else {
-      //Subscribe the creator to the sub
-      const id = sub.admin;
-
-      User.findById(id, (err, foundUser) => {
-        if (!err) {
-          foundUser.subs.push(newSub)
-          foundUser.save()
-          res.render('index')
-        }
+  let sub = req.body;
+  const id = req.body.admin;
+  User.findById(id, (err, foundUser) => {
+    if (!err) {
+      sub.admin = foundUser
+      Sub.create(sub, (err, newSub) => {
+        foundUser.subs.push(newSub)
+        foundUser.save()
+        res.render('index')
       })
     }
   })
