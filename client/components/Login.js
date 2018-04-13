@@ -31,11 +31,6 @@ class Login extends React.Component {
 
     this.props.startLogin(username, password)
   }
-  checkUser = () => {
-    axios.get('/currentuser')
-      .then( (response) => console.log('axios data', response.data))
-      .catch( () => console.log('axios get failed'))
-  }
   render() {
     return (
       <div>
@@ -56,7 +51,6 @@ class Login extends React.Component {
           <button>Login</button>
         </form>
         <Link to='/'>Home</Link>
-        <button onClick={this.checkUser}>Check user</button>
       </div>
     )
   }

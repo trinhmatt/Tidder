@@ -7,7 +7,7 @@ import Register from '../components/Register'
 import RegisterSuccess from '../components/RegisterSuccess'
 import CreateSubtidder from '../components/CreateSubtidder'
 
-const history = createHistory()
+export const history = createHistory()
 
 export const AppRouter = () => (
   <Router history={history}>

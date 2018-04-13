@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React from 'react'
+import { history } from '../../client/routes/AppRouter'
 
 export const login = (id, username) => ({
   type: 'LOGIN',
@@ -17,6 +18,7 @@ export const startLogin = (username, password) => {
       const username = response.data.username,
             id = response.data.id
       dispatch(login(id, username))
+      history.push('/')
     })
     .catch( () => console.log('login failed'))
   }

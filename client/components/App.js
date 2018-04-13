@@ -10,12 +10,6 @@ class App extends React.Component {
       password: ''
     }
   }
-  checkUser = () => {
-    axios.get('/currentuser')
-      .then( (response) => console.log('axios data', response.data))
-      .catch( () => console.log('axios get failed'))
-
-  }
   render() {
     return (
       <div>
@@ -24,7 +18,6 @@ class App extends React.Component {
         <a href='/login'>Login</a>
         <a href='/createpost'>Create post</a>
         <a href='/createsubtidder'>Create subtidder</a>
-        <button onClick={this.checkUser}>Check user</button>
       </div>
     )
   }
