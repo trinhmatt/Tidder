@@ -4,10 +4,6 @@ class Home extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      username: '',
-      password: ''
-    }
   }
   render() {
     return (
@@ -15,7 +11,6 @@ class Home extends React.Component {
         <h1>Test!!!</h1>
         <a href='/register'>Register</a>
         <a href='/login'>Login</a>
-        <a href='/createpost'>Create post</a>
         <a href='/createsubtidder'>Create subtidder</a>
       </div>
     )

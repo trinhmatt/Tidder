@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 class SubHome extends React.Component {
   constructor(props) {
@@ -9,7 +9,8 @@ class SubHome extends React.Component {
 
     this.state = {
       subData: '',
-      message: ''
+      message: '',
+      subData: {}
     }
   }
   componentDidMount() {
@@ -17,7 +18,11 @@ class SubHome extends React.Component {
       .then( (response) => {
         const subData = response.data
 
-        this.setState( () => ({subData}))
+        if (!subData) {
+          this.props.history.push('/404')
+        } else {
+          this.setState( () => ({subData}))
+        }
       })
       .catch( () => console.log('could not get sub data'))
   }
@@ -33,9 +38,11 @@ class SubHome extends React.Component {
   render() {
     return (
       <div>
-        <h1>Sub home</h1>
+        <h1>{this.state.subData.name}</h1>
+        <h2>{this.state.subData.description}</h2>
         {this.state.message}
         <button onClick={this.subscribeToSub}>Subscribe</button>
+        <Link to={`/${this.props.match.params.sub}/createpost`}>Create text post</Link>
       </div>
     )
   }
