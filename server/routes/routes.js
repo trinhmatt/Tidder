@@ -50,10 +50,11 @@ router.post('/subscribe/:id', (req, res) => {
 
 
 router.get('*', (req, res) => {
-  res.render('index');
+  //So that index can always find bundle.js in dev or prod 
+  //Required to get nested paths working (i.e. url/t/path)
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
+  res.render('index', {absolutePath});
 });
-
-
 
 
 //Create user
