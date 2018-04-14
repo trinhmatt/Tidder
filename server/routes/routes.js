@@ -37,20 +37,21 @@ router.post('/t/:sub', (req, res) => {
 
 //To subscribe to a sub
 router.post('/subscribe/:id', (req, res) => {
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
   const sub = req.body;
 
   User.findById(req.params.id, (err, foundUser) => {
     if (!err) {
       foundUser.subs.push(sub)
       foundUser.save()
-      res.render('index')
+      res.render('index', {absolutePath})
     }
   })
 })
 
 
 router.get('*', (req, res) => {
-  //So that index can always find bundle.js in dev or prod 
+  //So that index can always find bundle.js in dev or prod
   //Required to get nested paths working (i.e. url/t/path)
   const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
   res.render('index', {absolutePath});
@@ -59,6 +60,7 @@ router.get('*', (req, res) => {
 
 //Create user
 router.post('/register', (req, res) => {
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
   const username = new User({username: req.body.username, subs: []}),
         password = req.body.password;
   User.register(username, password, (err, user) => {
@@ -66,24 +68,36 @@ router.post('/register', (req, res) => {
       console.log(err)
     }
     passport.authenticate('local')(req, res, () => {
-      res.render('index')
+      res.render('index', {absolutePath})
     })
   })
 })
 
 //Create subreddit
 router.post('/createsubtidder', (req, res) => {
-
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
   let sub = req.body;
   const id = req.body.admin;
   User.findById(id, (err, foundUser) => {
     if (!err) {
       sub.admin = foundUser
       Sub.create(sub, (err, newSub) => {
-        foundUser.subs.push(newSub)
-        foundUser.save()
-        res.render('index')
+        if (err) {
+          console.log(err.errmsg)
+          // this example is showing how to get the field `email` out of the err message
+          let field = err.message.split('index: tidder.')[1].split('.$')[1]
+          // now we have `email_1 dup key`
+          field = field.split(' dup key')[0]
+          field = field.substring(0, field.lastIndexOf('_')) // returns email
+          console.log(field)
+        } else {
+          foundUser.subs.push(newSub)
+          foundUser.save()
+          res.render('index', {absolutePath})
+        }
       })
+    } else {
+      console.log(err)
     }
   })
 })

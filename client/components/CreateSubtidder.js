@@ -12,6 +12,11 @@ class CreateSubtidder extends React.Component {
       name: '',
       desc: '',
       ageRestricted: false,
+      permittedPosts: {
+        text: false,
+        video: false,
+        picture: false
+      },
       id: ''
     }
   }
@@ -30,6 +35,18 @@ class CreateSubtidder extends React.Component {
 
     this.setState( () => ({desc}))
   }
+  onPostTypeSelect = (e) => {
+    const type = e.target.id
+
+    this.setState( (prevState) => {
+      return {
+        permittedPosts: {
+          ...prevState.permittedPosts,
+          [type]: !prevState.permittedPosts[type]
+        }
+      }
+    })
+  }
   createSubtidder = (e) => {
     e.preventDefault();
 
@@ -37,15 +54,16 @@ class CreateSubtidder extends React.Component {
       name: this.state.name,
       description: this.state.desc,
       ageRestricted: this.state.ageRestricted,
-      mods: [],
-      admin: this.props.auth.id
+      admin: this.props.auth.id,
+      permittedPosts: this.state.permittedPosts
     }
 
     axios.post('/createsubtidder', sub)
       .then( () => {
         this.props.history.push('/createsubtidder/success')
       })
-      .catch( () => {
+      .catch( (error) => {
+        console.log(error)
         this.props.history.push('/createsubtidder/fail')
       })
   }
@@ -76,6 +94,36 @@ class CreateSubtidder extends React.Component {
             <div>
               <input type='radio' value={false} onClick={this.onRestrictSelect} />
               <label>No</label>
+            </div>
+          </div>
+          <div>
+            <label>Types of posts permitted</label>
+            <div>
+              <div>
+                <input
+                  type='checkbox'
+                  id='text'
+                  onClick={this.onPostTypeSelect}
+                />
+                <label>Text</label>
+              </div>
+              <div>
+                <input
+                  type='checkbox'
+                  id='video'
+                  onClick={this.onPostTypeSelect}
+                />
+                <label>Video</label>
+              </div>
+              <div>
+                <input
+                  type='checkbox'
+                  id='picture'
+                  value={this.state.permittedPosts.picture}
+                  onClick={this.onPostTypeSelect}
+                />
+                <label>Picture</label>
+              </div>
             </div>
           </div>
           <button>Create</button>
