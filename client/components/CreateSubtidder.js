@@ -17,7 +17,8 @@ class CreateSubtidder extends React.Component {
         video: false,
         picture: false
       },
-      id: ''
+      id: '',
+      error: ''
     }
   }
   onRestrictSelect = (e) => {
@@ -59,8 +60,12 @@ class CreateSubtidder extends React.Component {
     }
 
     axios.post('/createsubtidder', sub)
-      .then( () => {
-        this.props.history.push('/createsubtidder/success')
+      .then( (response) => {
+        if (response.data.indexOf('error') > -1) {
+          this.setState( () => ({error: response.data}))
+        } else {
+          this.props.history.push('/createsubtidder/success')
+        }
       })
       .catch( (error) => {
         console.log(error)
@@ -71,6 +76,7 @@ class CreateSubtidder extends React.Component {
     return (
       <div>
         <h1>Create Subtidder</h1>
+        <h2 className='error-message'>{this.state.error}</h2>
         <form onSubmit={this.createSubtidder}>
           <input
             type='text'

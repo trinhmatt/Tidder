@@ -19,19 +19,21 @@ export const history = createHistory()
 
 export const AppRouter = () => (
   <Router history={history}>
-    <Switch>
-      <Route path='/' component={Home} exact={true} />
-      <Route path='/404' component={NotFound} exact={true} />
-      <Route path='/t/:sub' component={SubHome} exact={true} />
-      <PrivateRoute path='/t/:sub/create' component={CreatePost} />
-      <Route path='/login' component={Login} />
-      <Route path='/register' component={Register} exact={true} />
-      <Route path='/registersuccess' component={RegisterSuccess} />
-      <PrivateRoute path='/createsubtidder' component={CreateSubtidder} exact={true} />
-      <Route path='/createsubtidder/success' component={CreateSubSuccess} />
-      <Route path='/createsubtidder/fail' component={CreateSubFail} />
-      <Route path='/unauthorized' component={Unauthorized} />
-    </Switch>
+    <div>
+      <Switch>
+        <Route path='/' component={Home} exact={true} />
+        <Route path='/404' component={NotFound} exact={true} />
+        <Route path='/t/:sub' component={SubHome} exact={true} />
+        <PrivateRoute path='/t/:sub/create' component={CreatePost} />
+        <Route path='/login' component={Login} />
+        <Route path='/register' component={Register} exact={true} />
+        <Route path='/registersuccess' component={RegisterSuccess} />
+        <PrivateRoute path='/createsubtidder' component={CreateSubtidder} exact={true} />
+        <Route path='/createsubtidder/success' component={CreateSubSuccess} />
+        <Route path='/createsubtidder/fail' component={CreateSubFail} />
+        <Route path='/unauthorized' component={Unauthorized} />
+      </Switch>
+    </div>
   </Router>
 );
 

@@ -53,6 +53,7 @@ router.post('/subscribe/:id', (req, res) => {
 router.get('*', (req, res) => {
   //So that index can always find bundle.js in dev or prod
   //Required to get nested paths working (i.e. url/t/path)
+  //Required in every route that renders index
   const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
   res.render('index', {absolutePath});
 });
@@ -83,13 +84,12 @@ router.post('/createsubtidder', (req, res) => {
       sub.admin = foundUser
       Sub.create(sub, (err, newSub) => {
         if (err) {
-          console.log(err.errmsg)
-          // this example is showing how to get the field `email` out of the err message
-          let field = err.message.split('index: tidder.')[1].split('.$')[1]
-          // now we have `email_1 dup key`
-          field = field.split(' dup key')[0]
-          field = field.substring(0, field.lastIndexOf('_')) // returns email
-          console.log(field)
+
+          if (err.errmsg.indexOf('dup') > -1) {
+            const errorMessage = 'Error: A subtidder of that name already exists, please try again.'
+            res.send(errorMessage)
+          }
+
         } else {
           foundUser.subs.push(newSub)
           foundUser.save()

@@ -10,7 +10,8 @@ class SubHome extends React.Component {
     this.state = {
       subData: '',
       message: '',
-      subData: {}
+      subData: {},
+      typeLinks: []
     }
   }
   componentDidMount() {
@@ -21,7 +22,8 @@ class SubHome extends React.Component {
         if (!subData) {
           this.props.history.push('/404')
         } else {
-          this.setState( () => ({subData}))
+          //Generate create links needs to be called after subData is set 
+          this.setState( () => ({subData}), this.generateCreateLinks)
         }
       })
       .catch( () => console.log('could not get sub data'))
@@ -35,14 +37,33 @@ class SubHome extends React.Component {
         this.setState( () => ({message: 'Something happened, try again?'}))
       })
   }
+  generateCreateLinks = () => {
+    let typeLinks = [];
+
+    for (let type in this.state.subData.permittedPosts) {
+      if (this.state.subData.permittedPosts[type]) {
+        const typeLink = (
+          <Link
+            key={type}
+            to={{
+              pathname: `/t/${this.props.match.params.sub}/create`,
+              state: { type }
+            }}>Create {type} post
+          </Link>
+        )
+        typeLinks.push(typeLink)
+      }
+    }
+    this.setState( () => ({typeLinks}))
+  }
   render() {
     return (
       <div>
         <h1>{this.state.subData.name}</h1>
         <h2>{this.state.subData.description}</h2>
         {this.state.message}
-        <button onClick={this.subscribeToSub}>Subscribe</button>
-        <Link to={`/${this.props.match.params.sub}/createpost`}>Create text post</Link>
+        {this.props.id ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
+        {this.state.typeLinks}
       </div>
     )
   }

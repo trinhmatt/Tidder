@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 class Home extends React.Component {
   constructor(props) {
@@ -9,9 +10,9 @@ class Home extends React.Component {
     return (
       <div>
         <h1>Test!!!</h1>
-        <a href='/register'>Register</a>
-        <a href='/login'>Login</a>
-        <a href='/createsubtidder'>Create subtidder</a>
+        <Link to='/register'>Register</Link>
+        <Link to='/login'>Login</Link>
+        <Link to='/createsubtidder'>Create subtidder</Link>
       </div>
     )
   }

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const SubSchema = new mongoose.Schema({
-  name: String,
+  name: {type: String, unique: true, required: true, dropDups: true},
   description: String,
   posts: [
     {
