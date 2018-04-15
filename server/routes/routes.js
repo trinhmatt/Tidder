@@ -4,6 +4,7 @@ const passport = require('passport');
 
 import User from '../../models/user'
 import Sub from '../../models/subreddit'
+import Post from '../../models/post'
 
 
 // To get the currentUser data from backend
@@ -81,6 +82,7 @@ router.post('/createsubtidder', (req, res) => {
   const id = req.body.admin;
   User.findById(id, (err, foundUser) => {
     if (!err) {
+      //Set admin to foundUser for correct association
       sub.admin = foundUser
       Sub.create(sub, (err, newSub) => {
         if (err) {
@@ -98,6 +100,30 @@ router.post('/createsubtidder', (req, res) => {
       })
     } else {
       console.log(err)
+    }
+  })
+})
+
+router.post('/t/:sub/create', (req, res) => {
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
+  let post = req.body;
+  const id = req.body.sub;
+
+  Sub.findById(id, (err, foundSub) => {
+    //Set sub to the found sub for correct association in DB
+    post.sub = foundSub
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      Post.create(post, (err, newPost) => {
+        if (err) {
+          console.log(err.errmsg)
+        } else {
+          foundSub.posts.push(newPost)
+          foundSub.save()
+          res.render('index', {absolutePath})
+        }
+      })
     }
   })
 })

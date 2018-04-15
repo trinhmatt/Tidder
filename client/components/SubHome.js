@@ -22,7 +22,8 @@ class SubHome extends React.Component {
         if (!subData) {
           this.props.history.push('/404')
         } else {
-          //Generate create links needs to be called after subData is set 
+          //Generate create links needs to be called after subData is set
+
           this.setState( () => ({subData}), this.generateCreateLinks)
         }
       })
@@ -47,7 +48,7 @@ class SubHome extends React.Component {
             key={type}
             to={{
               pathname: `/t/${this.props.match.params.sub}/create`,
-              state: { type }
+              state: { type, subId: this.state.subData._id }
             }}>Create {type} post
           </Link>
         )

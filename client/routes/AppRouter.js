@@ -7,8 +7,8 @@ import Login from '../components/Login'
 import Register from '../components/Register'
 import RegisterSuccess from '../components/RegisterSuccess'
 import CreateSubtidder from '../components/CreateSubtidder'
-import CreateSubSuccess from '../components/CreateSubSuccess'
-import CreateSubFail from '../components/CreateSubFail'
+import CreateSuccess from '../components/CreateSuccess'
+import CreateFail from '../components/CreateFail'
 import SubHome from '../components/SubHome'
 import CreatePost from '../components/CreatePost'
 import Unauthorized from '../components/Unauthorized'
@@ -24,13 +24,15 @@ export const AppRouter = () => (
         <Route path='/' component={Home} exact={true} />
         <Route path='/404' component={NotFound} exact={true} />
         <Route path='/t/:sub' component={SubHome} exact={true} />
-        <PrivateRoute path='/t/:sub/create' component={CreatePost} />
+        <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
+        <Route path='/t/:sub/create/success' component={CreateSuccess} />
+        <Route path='/t/:sub/create/fail' component={CreateFail} />
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} exact={true} />
         <Route path='/registersuccess' component={RegisterSuccess} />
         <PrivateRoute path='/createsubtidder' component={CreateSubtidder} exact={true} />
-        <Route path='/createsubtidder/success' component={CreateSubSuccess} />
-        <Route path='/createsubtidder/fail' component={CreateSubFail} />
+        <Route path='/createsubtidder/success' component={CreateSuccess} />
+        <Route path='/createsubtidder/fail' component={CreateFail} />
         <Route path='/unauthorized' component={Unauthorized} />
       </Switch>
     </div>
