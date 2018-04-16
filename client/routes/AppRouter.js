@@ -13,6 +13,7 @@ import SubHome from '../components/SubHome'
 import CreatePost from '../components/CreatePost'
 import Unauthorized from '../components/Unauthorized'
 import NotFound from '../components/NotFound'
+import Post from '../components/Post'
 
 
 export const history = createHistory()
@@ -25,6 +26,7 @@ export const AppRouter = () => (
         <Route path='/404' component={NotFound} exact={true} />
         <Route path='/t/:sub' component={SubHome} exact={true} />
         <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
+        <Route path='/t/:sub/:id' component={Post} exact={true} />
         <Route path='/t/:sub/create/success' component={CreateSuccess} />
         <Route path='/t/:sub/create/fail' component={CreateFail} />
         <Route path='/login' component={Login} />

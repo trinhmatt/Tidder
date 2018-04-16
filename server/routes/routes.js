@@ -5,7 +5,7 @@ const passport = require('passport');
 import User from '../../models/user'
 import Sub from '../../models/subreddit'
 import Post from '../../models/post'
-
+import Comment from '../../models/comment'
 
 // To get the currentUser data from backend
 // All GET routes must be declared before the catch all to ensure they get priority
@@ -27,11 +27,23 @@ router.get('/currentuser', (req, res) => {
 //To send the sub information to the client
 //Made it a post so that you can directly go to a sub home without navigating from the main page
 router.post('/t/:sub', (req, res) => {
-  Sub.findOne({name: req.params.sub}, (err, sub) => {
+  Sub.findOne({name: req.params.sub}).populate('posts').exec( (err, sub) => {
     if (!err) {
       res.send(sub)
     } else {
       console.log(err)
+    }
+  })
+})
+
+//Send post information to the client if a user trys to go to the post page without using react-Router
+  //I.e. if they enter the post url into the browser and directly access the post page
+router.post('/t/:sub/:postID', (req, res) => {
+  Post.findOne({_id: req.params.postID}, (err, post) => {
+    if (err) {
+      res.send('Oops! Something happened, please try again or check the URL')
+    } else {
+      res.send(post)
     }
   })
 })
@@ -104,6 +116,7 @@ router.post('/createsubtidder', (req, res) => {
   })
 })
 
+//Create post
 router.post('/t/:sub/create', (req, res) => {
   const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
   let post = req.body;
@@ -121,6 +134,30 @@ router.post('/t/:sub/create', (req, res) => {
         } else {
           foundSub.posts.push(newPost)
           foundSub.save()
+          res.render('index', {absolutePath})
+        }
+      })
+    }
+  })
+})
+
+//Create comment
+router.post('/t/:sub/:postID/comment', (req, res) => {
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
+  let comment = req.body;
+  const postID = req.params.postID;
+
+  Post.findById(postID, (err, foundPost) => {
+    comment.post = foundPost
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      Comment.create(comment, (err, newComment) => {
+        if (err) {
+          console.log(err.errmsg)
+        } else {
+          foundPost.comments.push(newComment)
+          foundPost.save()
           res.render('index', {absolutePath})
         }
       })

@@ -11,7 +11,8 @@ class SubHome extends React.Component {
       subData: '',
       message: '',
       subData: {},
-      typeLinks: []
+      typeLinks: [],
+      allPosts: []
     }
   }
   componentDidMount() {
@@ -22,9 +23,28 @@ class SubHome extends React.Component {
         if (!subData) {
           this.props.history.push('/404')
         } else {
-          //Generate create links needs to be called after subData is set
+          let allPosts = [];
+          //Set up posts for render
+          for (let i = 0; i<subData.posts.length; i++) {
+            const post = (
+              <div key={subData.posts[i]._id}>
+                <Link
+                  to={{
+                    pathname: `/t/${this.props.match.params.sub}/${subData.posts[i]._id}`,
+                    state: {
+                      title: subData.posts[i].title,
+                      body: subData.posts[i].body,
+                      author: subData.posts[i].author
+                    }
+                  }}>{subData.posts[i].title}
+                </Link>
+              </div>
+            )
+            allPosts.push(post)
+          }
 
-          this.setState( () => ({subData}), this.generateCreateLinks)
+          // Generate create links needs to be called after subData is set
+          this.setState( () => ({subData, allPosts}), this.generateCreateLinks)
         }
       })
       .catch( () => console.log('could not get sub data'))
@@ -65,6 +85,7 @@ class SubHome extends React.Component {
         {this.state.message}
         {this.props.id ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
         {this.state.typeLinks}
+        {this.state.allPosts}
       </div>
     )
   }
