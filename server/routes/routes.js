@@ -39,7 +39,7 @@ router.post('/t/:sub', (req, res) => {
 //Send post information to the client if a user trys to go to the post page without using react-Router
   //I.e. if they enter the post url into the browser and directly access the post page
 router.post('/t/:sub/:postID', (req, res) => {
-  Post.findOne({_id: req.params.postID}, (err, post) => {
+  Post.findOne({_id: req.params.postID}).populate('comments', 'author body').exec( (err, post) => {
     if (err) {
       res.send('Oops! Something happened, please try again or check the URL')
     } else {
@@ -143,7 +143,6 @@ router.post('/t/:sub/create', (req, res) => {
 
 //Create comment
 router.post('/t/:sub/:postID/comment', (req, res) => {
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
   let comment = req.body;
   const postID = req.params.postID;
 
@@ -158,7 +157,7 @@ router.post('/t/:sub/:postID/comment', (req, res) => {
         } else {
           foundPost.comments.push(newComment)
           foundPost.save()
-          res.render('index', {absolutePath})
+          res.send(newComment)
         }
       })
     }

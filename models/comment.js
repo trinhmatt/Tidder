@@ -6,10 +6,7 @@ const CommentSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
   },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }
+  author: String
 })
 
 module.exports = mongoose.model('Comment', CommentSchema);

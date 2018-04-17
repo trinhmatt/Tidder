@@ -8,15 +8,27 @@ class Post extends React.Component {
 
     this.state = {
       comment: '',
-      postData: ''
+      postData: '',
+      allComments: []
     }
   }
   componentDidMount() {
+    let allComments = [];
+
     //If the user trys to access the page without going through the react router
     //I.e. directly entering the URL in the browser
     axios.post(`${this.props.location.pathname}`)
       .then( (response) => {
-        this.setState( () => ({postData: response.data}))
+        for (let i = 0; i<response.data.comments.length; i++) {
+          const commentDiv = (
+            <div key={i}>
+              <p>{response.data.comments[i].body}</p>
+              <p>Author: {response.data.comments[i].author}</p>
+            </div>
+          )
+          allComments.push(commentDiv)
+        }
+        this.setState( () => ({postData: response.data, allComments}))
       })
       .catch( (error) => console.log(error))
   }
@@ -31,14 +43,22 @@ class Post extends React.Component {
     const comment = {
       body: this.state.comment,
       post: {},
-      author: {
-        _id: this.props.auth.id
-      }
+      author: this.props.auth.username
     }
 
     axios.post(`${this.props.location.pathname}/comment`, comment)
-      .then( () => {
-        console.log('comment added')
+      .then( (response) => {
+        const comment = [(
+          <div>
+            <p>{response.data.body}</p>
+            <p>Author: {response.data.author}</p>
+          </div>
+        )];
+
+        this.setState( (prevState) => {
+          return {allComments: prevState.allComments.concat(comment)}
+        })
+
       })
       .catch( () => {
         console.log('comment failed')
@@ -55,6 +75,7 @@ class Post extends React.Component {
           {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
         </p>
         <h3>Comments</h3>
+        {this.state.allComments}
         {this.props.auth.id ? (
           <div>
             <h4>Create a comment</h4>
