@@ -6,7 +6,11 @@ const CommentSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
   },
-  author: String
+  author: String,
+  votes: {
+    up: Number,
+    down: Number
+  }
 })
 
 module.exports = mongoose.model('Comment', CommentSchema);

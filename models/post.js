@@ -13,7 +13,11 @@ const PostSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Comment'
     }
-  ]
+  ],
+  votes: {
+    up: {type: Number, default: 0},
+    down: {type: Number, default: 0}
+  }
 })
 
 module.exports = mongoose.model('Post', PostSchema);

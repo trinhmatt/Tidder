@@ -11,9 +11,6 @@ class CreatePost extends React.Component {
       body: ''
     }
   }
-  componentDidMount() {
-    // this.generateInput()
-  }
   generateInput = () => {
     let inputToRender;
 
@@ -70,11 +67,15 @@ class CreatePost extends React.Component {
       title: this.state.title,
       body: this.state.body,
       author: this.props.username,
-      sub: this.props.location.state.subId
+      sub: this.props.location.state.subId,
+      votes: {up: 0, down: 0}
     }
 
     axios.post(`${this.props.location.pathname}`, post)
-      .then( () => this.props.history.push(`${this.props.location.pathname}/success`))
+      .then( (response) => {
+        console.log(response)
+        this.props.history.push(`${this.props.location.pathname}/success`)
+      })
       .catch( () => this.props.history.push(`${this.props.location.pathname}/fail`))
 
   }

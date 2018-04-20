@@ -36,6 +36,32 @@ router.post('/t/:sub', (req, res) => {
   })
 })
 
+//Create post
+//Needs to be before the fetch post to work
+router.post('/t/:sub/create', (req, res) => {
+  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
+  let post = req.body;
+  const id = req.body.sub;
+
+  Sub.findById(id, (err, foundSub) => {
+    //Set sub to the found sub for correct association in DB
+    post.sub = foundSub
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      Post.create(post, (err, newPost) => {
+        if (err) {
+          console.log(err.errmsg)
+        } else {
+          foundSub.posts.push(newPost)
+          foundSub.save()
+          res.render('index', {absolutePath})
+        }
+      })
+    }
+  })
+})
+
 //Send post information to the client if a user trys to go to the post page without using react-Router
   //I.e. if they enter the post url into the browser and directly access the post page
 router.post('/t/:sub/:postID', (req, res) => {
@@ -45,6 +71,26 @@ router.post('/t/:sub/:postID', (req, res) => {
     } else {
       res.send(post)
     }
+  })
+})
+
+router.post('/t/:sub/:postID/vote', (req, res) => {
+  Post.findOne({_id: req.params.postID}, (err, post) => {
+    if (err) {
+      console.log(err.errmsg)
+      res.send('Error')
+    } else {
+      if (req.body.vote > 0) {
+        post.votes.up += 1
+        post.save()
+        res.send('Success')
+      } else {
+        post.votes.down -= 1
+        post.save()
+        res.send('Success')
+      }
+    }
+
   })
 })
 
@@ -112,31 +158,6 @@ router.post('/createsubtidder', (req, res) => {
       })
     } else {
       console.log(err)
-    }
-  })
-})
-
-//Create post
-router.post('/t/:sub/create', (req, res) => {
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
-  let post = req.body;
-  const id = req.body.sub;
-
-  Sub.findById(id, (err, foundSub) => {
-    //Set sub to the found sub for correct association in DB
-    post.sub = foundSub
-    if (err) {
-      console.log(err.errmsg)
-    } else {
-      Post.create(post, (err, newPost) => {
-        if (err) {
-          console.log(err.errmsg)
-        } else {
-          foundSub.posts.push(newPost)
-          foundSub.save()
-          res.render('index', {absolutePath})
-        }
-      })
     }
   })
 })

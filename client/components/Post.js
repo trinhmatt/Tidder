@@ -17,6 +17,7 @@ class Post extends React.Component {
 
     //If the user trys to access the page without going through the react router
     //I.e. directly entering the URL in the browser
+
     axios.post(`${this.props.location.pathname}`)
       .then( (response) => {
         for (let i = 0; i<response.data.comments.length; i++) {
@@ -31,6 +32,7 @@ class Post extends React.Component {
         this.setState( () => ({postData: response.data, allComments}))
       })
       .catch( (error) => console.log(error))
+
   }
   onCommentChange = (e) => {
     const comment = e.target.value;
@@ -65,6 +67,36 @@ class Post extends React.Component {
       })
 
   }
+  submitVote = (e) => {
+
+    //Check what type of vote it is before posting
+
+    if (e.target.id === 'up') {
+      axios.post(`${this.props.location.pathname}/vote`, {vote: 1})
+        .then( (response) => {
+          if (response.data === 'Error') {
+            this.setState( () => ({message: 'Something went wrong'}))
+          } else {
+            this.setState( () => ({message: 'Vote succesful'}))
+          }
+        })
+        .catch( () => {
+          this.setState( () => ({message: 'Something went wrong'}))
+        })
+    } else {
+      axios.post(`${this.props.location.pathname}/vote`, {vote: -1})
+        .then( (response) => {
+          if (response.data === 'Error') {
+            this.setState( () => ({message: 'Something went wrong'}))
+          } else {
+            this.setState( () => ({message: 'Vote succesful'}))
+          }
+        })
+        .catch( () => {
+          this.setState( () => ({message: 'Something went wrong'}))
+        })
+    }
+  }
   render() {
     return (
       <div>
@@ -74,6 +106,13 @@ class Post extends React.Component {
         <p>
           {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
         </p>
+        {this.props.auth.id ? (
+          <div>
+            <button id='up' onClick={this.submitVote}>Upvote</button>
+            <button id='down' onClick={this.submitVote}>Downvote</button>
+            <p>{this.state.message}</p>
+          </div>
+        ) : ''}
         <h3>Comments</h3>
         {this.state.allComments}
         {this.props.auth.id ? (
