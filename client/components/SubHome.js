@@ -28,6 +28,7 @@ class SubHome extends React.Component {
           for (let i = 0; i<subData.posts.length; i++) {
             const post = (
               <div key={subData.posts[i]._id}>
+                <p>Votes: {subData.posts[i].votes.up + subData.posts[i].votes.down}</p>
                 <Link
                   to={{
                     pathname: `/t/${this.props.match.params.sub}/${subData.posts[i]._id}`,

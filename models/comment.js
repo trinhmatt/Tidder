@@ -8,8 +8,8 @@ const CommentSchema = new mongoose.Schema({
   },
   author: String,
   votes: {
-    up: Number,
-    down: Number
+    up: {type: Number, default: 0},
+    down: {type: Number, default: 0}
   }
 })
 

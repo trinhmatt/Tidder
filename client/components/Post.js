@@ -45,7 +45,8 @@ class Post extends React.Component {
     const comment = {
       body: this.state.comment,
       post: {},
-      author: this.props.auth.username
+      author: this.props.auth.username,
+      votes: {up: 0, down: 0}
     }
 
     axios.post(`${this.props.location.pathname}/comment`, comment)
@@ -62,16 +63,17 @@ class Post extends React.Component {
         })
 
       })
-      .catch( () => {
+      .catch( (err) => {
+        console.log(err)
         console.log('comment failed')
       })
 
   }
-  submitVote = (e) => {
+  submitPostVote = (e) => {
 
     //Check what type of vote it is before posting
 
-    if (e.target.id === 'up') {
+    if (e.target.id === 'up-post') {
       axios.post(`${this.props.location.pathname}/vote`, {vote: 1})
         .then( (response) => {
           if (response.data === 'Error') {
@@ -97,6 +99,33 @@ class Post extends React.Component {
         })
     }
   }
+  commentVote = (e) => {
+    if (e.target.id === 'up-comment') {
+      axios.post(`${this.props.location.pathname}/vote/comment`, {vote: 1})
+        .then( (response) => {
+          if (response.data === 'Error') {
+            this.setState( () => ({message: 'Something went wrong'}))
+          } else {
+            this.setState( () => ({message: 'Vote succesful'}))
+          }
+        })
+        .catch( () => {
+          this.setState( () => ({message: 'Something went wrong'}))
+        })
+    } else {
+      axios.post(`${this.props.location.pathname}/vote/comment`, {vote: -1})
+        .then( (response) => {
+          if (response.data === 'Error') {
+            this.setState( () => ({message: 'Something went wrong'}))
+          } else {
+            this.setState( () => ({message: 'Vote succesful'}))
+          }
+        })
+        .catch( () => {
+          this.setState( () => ({message: 'Something went wrong'}))
+        })
+    }
+  }
   render() {
     return (
       <div>
@@ -108,8 +137,8 @@ class Post extends React.Component {
         </p>
         {this.props.auth.id ? (
           <div>
-            <button id='up' onClick={this.submitVote}>Upvote</button>
-            <button id='down' onClick={this.submitVote}>Downvote</button>
+            <button id='up-post' onClick={this.submitPostVote}>Upvote</button>
+            <button id='down-post' onClick={this.submitPostVote}>Downvote</button>
             <p>{this.state.message}</p>
           </div>
         ) : ''}

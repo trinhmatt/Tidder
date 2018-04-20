@@ -24,6 +24,31 @@ router.get('/currentuser', (req, res) => {
   }
 })
 
+//Create comment
+router.post('/t/:sub/:postID/comment', (req, res) => {
+  let comment = req.body;
+  const postID = req.params.postID;
+  console.log(postID)
+  Post.findById(postID, (err, foundPost) => {
+    comment.post = foundPost
+    if (err) {
+      console.log('failed at postFind')
+      console.log(err.errmsg)
+    } else {
+      Comment.create(comment, (err, newComment) => {
+        if (err) {
+          console.log('failed at comment create')
+          console.log(err.errmsg)
+        } else {
+          foundPost.comments.push(newComment)
+          foundPost.save()
+          res.send(newComment)
+        }
+      })
+    }
+  })
+})
+
 //To send the sub information to the client
 //Made it a post so that you can directly go to a sub home without navigating from the main page
 router.post('/t/:sub', (req, res) => {
@@ -65,7 +90,7 @@ router.post('/t/:sub/create', (req, res) => {
 //Send post information to the client if a user trys to go to the post page without using react-Router
   //I.e. if they enter the post url into the browser and directly access the post page
 router.post('/t/:sub/:postID', (req, res) => {
-  Post.findOne({_id: req.params.postID}).populate('comments', 'author body').exec( (err, post) => {
+  Post.findOne({_id: req.params.postID}).populate('comments').exec( (err, post) => {
     if (err) {
       res.send('Oops! Something happened, please try again or check the URL')
     } else {
@@ -158,29 +183,6 @@ router.post('/createsubtidder', (req, res) => {
       })
     } else {
       console.log(err)
-    }
-  })
-})
-
-//Create comment
-router.post('/t/:sub/:postID/comment', (req, res) => {
-  let comment = req.body;
-  const postID = req.params.postID;
-
-  Post.findById(postID, (err, foundPost) => {
-    comment.post = foundPost
-    if (err) {
-      console.log(err.errmsg)
-    } else {
-      Comment.create(comment, (err, newComment) => {
-        if (err) {
-          console.log(err.errmsg)
-        } else {
-          foundPost.comments.push(newComment)
-          foundPost.save()
-          res.send(newComment)
-        }
-      })
     }
   })
 })
