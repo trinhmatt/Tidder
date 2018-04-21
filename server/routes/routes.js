@@ -25,22 +25,24 @@ router.get('/currentuser', (req, res) => {
 })
 
 //Create comment
-router.post('/t/:sub/:postID/comment', (req, res) => {
+router.post('/api/t/:sub/:postID/comment', (req, res) => {
   let comment = req.body;
   const postID = req.params.postID;
-  console.log(postID)
+
   Post.findById(postID, (err, foundPost) => {
-    comment.post = foundPost
     if (err) {
-      console.log('failed at postFind')
       console.log(err.errmsg)
     } else {
+      comment.post = foundPost;
+
       Comment.create(comment, (err, newComment) => {
         if (err) {
-          console.log('failed at comment create')
           console.log(err.errmsg)
         } else {
-          foundPost.comments.push(newComment)
+          //NTS: YOU SHOULD NOT PUSH THE ENTIRE OBJECT, ALL YOU NEED IS THE ID
+          const commentRef = { _id: newComment._id }
+
+          foundPost.comments.push(commentRef)
           foundPost.save()
           res.send(newComment)
         }

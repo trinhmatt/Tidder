@@ -49,7 +49,7 @@ class Post extends React.Component {
       votes: {up: 0, down: 0}
     }
 
-    axios.post(`${this.props.location.pathname}/comment`, comment)
+    axios.post(`/api${this.props.location.pathname}/comment`, comment)
       .then( (response) => {
         const comment = [(
           <div>
