@@ -6,7 +6,8 @@ export default (state = {}, action) => {
       return {
         username: action.username,
         id: action.id,
-        subs: action.subs
+        subs: action.subs,
+        votedPosts: action.votedPosts
       }
     case 'LOGOUT':
       return state;

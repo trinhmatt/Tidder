@@ -80,7 +80,9 @@ router.post('/t/:sub/create', (req, res) => {
         if (err) {
           console.log(err.errmsg)
         } else {
-          foundSub.posts.push(newPost)
+          const newPostId = { _id: newPost._id }
+
+          foundSub.posts.push(newPostId)
           foundSub.save()
           res.render('index', {absolutePath})
         }
@@ -101,23 +103,72 @@ router.post('/t/:sub/:postID', (req, res) => {
   })
 })
 
+//To vote on a post
 router.post('/t/:sub/:postID/vote', (req, res) => {
   Post.findOne({_id: req.params.postID}, (err, post) => {
     if (err) {
       console.log(err.errmsg)
       res.send('Error')
     } else {
-      if (req.body.vote > 0) {
-        post.votes.up += 1
-        post.save()
-        res.send('Success')
-      } else {
-        post.votes.down -= 1
-        post.save()
-        res.send('Success')
-      }
-    }
+      //Need to find user to save vote, prevent users from voting more than once
+      User.findById(req.body.user, (err, foundUser) => {
+        if (err) {
+          console.log(err.errmsg)
+          res.send('Error')
+        } else {
 
+          let voteReset = false;
+          let voteSwitch = false;
+
+          for (let i = 0; i<foundUser.votedPosts.length; i++) {
+            if (foundUser.votedPosts[i].post === req.params.postID) {
+              if (foundUser.votedPosts[i].vote === req.body.vote) {
+                voteReset = true;
+                foundUser.votedPosts.splice(i, 1)
+                foundUser.save()
+                break
+              } else {
+                voteSwitch = true;
+                foundUser.votedPosts[postIndex].vote = req.body.vote
+                foundUser.save()
+                break
+              }
+            }
+          }
+
+          if (voteReset) {
+
+            if (req.body.vote === 1) {
+              post.votes.up -= 1
+            } else {
+              post.votes.down += 1
+            }
+
+          } else if (voteSwitch) {
+
+            post.votes.up += req.body.vote
+            post.votes.down += req.body.vote
+
+          } else {
+
+            if (req.body.vote === 1) {
+              post.votes.up += 1
+            } else {
+              post.votes.down -= 1
+            }
+
+            const userVote = {post: req.params.postID, vote: req.body.vote}
+            foundUser.votedPosts.push(userVote)
+            foundUser.save()
+
+          }
+
+          post.save()
+          res.send('success')
+
+        }
+      })
+    }
   })
 })
 
@@ -148,7 +199,7 @@ router.get('*', (req, res) => {
 //Create user
 router.post('/register', (req, res) => {
   const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
-  const username = new User({username: req.body.username, subs: []}),
+  const username = new User({ username: req.body.username, subs: [], votedPosts: [] }),
         password = req.body.password;
   User.register(username, password, (err, user) => {
     if (err){
@@ -178,7 +229,10 @@ router.post('/createsubtidder', (req, res) => {
           }
 
         } else {
-          foundUser.subs.push(newSub)
+
+          const newSubId = { _id: newSub._id }
+
+          foundUser.subs.push(newSubId)
           foundUser.save()
           res.render('index', {absolutePath})
         }

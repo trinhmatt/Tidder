@@ -9,7 +9,14 @@ const UserSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Sub'
     }
-  ]
+  ],
+  //Keep track of voted posts so user can only vote once
+  //Post = postID,
+  //Vote = 1 for upvote and -1 for downvote
+  votedPosts: [{
+    post: String,
+    vote: Number
+  }]
 })
 
 UserSchema.plugin(passportLocalMongoose);
