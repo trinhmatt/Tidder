@@ -9,13 +9,11 @@ class Post extends React.Component {
     this.state = {
       comment: '',
       postData: '',
-      allComments: [],
-      userVote: 0
+      allComments: []
     }
   }
   componentDidMount() {
     let allComments = [];
-    let userVote = 0;
 
     //If the user trys to access the page without going through the react router
     //I.e. directly entering the URL in the browser
@@ -32,15 +30,7 @@ class Post extends React.Component {
           allComments.push(commentDiv)
         }
 
-        if (this.props.auth.id) {
-          for (let n = 0; n<this.props.auth.votedPosts.length; n++) {
-            if (this.props.match.params.id === this.props.auth.votedPosts[n].post) {
-              userVote = this.props.auth.votedPosts[n].vote
-            }
-          }
-        }
-
-        this.setState( () => ({postData: response.data, allComments, userVote}))
+        this.setState( () => ({postData: response.data, allComments}))
       })
       .catch( (error) => console.log(error))
 
