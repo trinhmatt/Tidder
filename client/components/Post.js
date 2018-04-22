@@ -23,6 +23,10 @@ class Post extends React.Component {
         for (let i = 0; i<response.data.comments.length; i++) {
           const commentDiv = (
             <div key={i}>
+              <div id={response.data.comments[i]._id}>
+                <button id='up-comment' onClick={this.commentVote}>Upvote</button>
+                <button id='down-comment' onClick={this.commentVote}>Downvote</button>
+              </div>
               <p>{response.data.comments[i].body}</p>
               <p>Author: {response.data.comments[i].author}</p>
             </div>
@@ -94,35 +98,35 @@ class Post extends React.Component {
       })
   }
   commentVote = (e) => {
+    let vote;
+    const commentId = e.target.parentNode.id
+
     if (e.target.id === 'up-comment') {
-      axios.post(`${this.props.location.pathname}/vote/comment`, {vote: 1})
-        .then( (response) => {
-          if (response.data === 'Error') {
-            this.setState( () => ({message: 'Something went wrong'}))
-          } else {
-            this.setState( () => ({message: 'Vote succesful'}))
-          }
-        })
-        .catch( () => {
-          this.setState( () => ({message: 'Something went wrong'}))
-        })
+      vote = 1
     } else {
-      axios.post(`${this.props.location.pathname}/vote/comment`, {vote: -1})
-        .then( (response) => {
-          if (response.data === 'Error') {
-            this.setState( () => ({message: 'Something went wrong'}))
-          } else {
-            this.setState( () => ({message: 'Vote succesful'}))
-          }
-        })
-        .catch( () => {
-          this.setState( () => ({message: 'Something went wrong'}))
-        })
+      vote = -1
     }
+
+    axios.post(`${this.props.location.pathname}/comment`, {
+      vote: vote,
+      user: this.props.auth.id,
+      comment: commentId
+    })
+      .then( (response) => {
+        if (response.data === 'Error') {
+          this.setState( () => ({message: 'Something went wrong'}))
+        } else {
+          this.setState( () => ({message: 'Vote succesful'}))
+        }
+      })
+      .catch( () => {
+        this.setState( () => ({message: 'Something went wrong'}))
+      })
   }
   render() {
     return (
       <div>
+        <p>{this.state.message}</p>
         <h1>
           {this.props.location.state ? this.props.location.state.title : this.state.postData.title}
         </h1>
@@ -133,7 +137,6 @@ class Post extends React.Component {
           <div>
             <button id='up-post' onClick={this.onVoteClick}>Upvote</button>
             <button id='down-post' onClick={this.onVoteClick}>Downvote</button>
-            <p>{this.state.message}</p>
           </div>
         ) : ''}
         <h3>Comments</h3>

@@ -116,11 +116,12 @@ router.post('/t/:sub/:postID/vote', (req, res) => {
           console.log(err.errmsg)
           res.send('Error')
         } else {
-
+          //Both variables needed in case the user has already voted on the post
           let voteReset = false;
           let voteSwitch = false;
 
           for (let i = 0; i<foundUser.votedPosts.length; i++) {
+            //If the user has already voted and the new vote is the same as the old
             if (foundUser.votedPosts[i].post === req.params.postID) {
               if (foundUser.votedPosts[i].vote === req.body.vote) {
                 voteReset = true;
@@ -129,7 +130,7 @@ router.post('/t/:sub/:postID/vote', (req, res) => {
                 break
               } else {
                 voteSwitch = true;
-                foundUser.votedPosts[postIndex].vote = req.body.vote
+                foundUser.votedPosts[i].vote = req.body.vote
                 foundUser.save()
                 break
               }
@@ -145,12 +146,12 @@ router.post('/t/:sub/:postID/vote', (req, res) => {
             }
 
           } else if (voteSwitch) {
-
+            //req.body.vote = 1 or -1, so adding either will be the same thing as a switch
             post.votes.up += req.body.vote
             post.votes.down += req.body.vote
 
           } else {
-
+            //If voteSwitch and voteReset are false, the user has never voted
             if (req.body.vote === 1) {
               post.votes.up += 1
             } else {
@@ -164,6 +165,76 @@ router.post('/t/:sub/:postID/vote', (req, res) => {
           }
 
           post.save()
+          res.send('success')
+
+        }
+      })
+    }
+  })
+})
+
+//To vote on a comment
+router.post('/t/:sub/:postID/comment', (req, res) => {
+  Comment.findOne({_id: req.body.comment}, (err, comment) => {
+    if (err) {
+      console.log(err.errmsg)
+      res.send('Error')
+    } else {
+      //Need to find user to save vote, prevent users from voting more than once
+      User.findById(req.body.user, (err, foundUser) => {
+        if (err) {
+          console.log(err.errmsg)
+          res.send('Error')
+        } else {
+          //Both variables needed in case the user has already voted on the comment
+          let voteReset = false;
+          let voteSwitch = false;
+
+          for (let i = 0; i<foundUser.votedPosts.length; i++) {
+            //If the user has already voted and the new vote is the same as the old
+            if (foundUser.votedPosts[i].post === req.body.comment) {
+              if (foundUser.votedPosts[i].vote === req.body.vote) {
+                voteReset = true;
+                foundUser.votedPosts.splice(i, 1)
+                foundUser.save()
+                break
+              } else {
+                voteSwitch = true;
+                foundUser.votedPosts[i].vote = req.body.vote
+                foundUser.save()
+                break
+              }
+            }
+          }
+
+          if (voteReset) {
+
+            if (req.body.vote === 1) {
+              comment.votes.up -= 1
+            } else {
+              comment.votes.down += 1
+            }
+
+          } else if (voteSwitch) {
+            //req.body.vote = 1 or -1, so adding either will be the same thing as a switch
+            comment.votes.up += req.body.vote
+            comment.votes.down += req.body.vote
+
+          } else {
+            //If voteSwitch and voteReset are false, the user has never voted
+            if (req.body.vote === 1) {
+              comment.votes.up += 1
+            } else {
+              comment.votes.down -= 1
+            }
+
+            const userVote = {post: req.body.comment, vote: req.body.vote}
+            foundUser.votedPosts.push(userVote)
+            foundUser.save()
+
+          }
+
+          comment.save()
           res.send('success')
 
         }

@@ -19,7 +19,6 @@ export const startLogin = (username, password) => {
     .then( (response) => {
 
       const user = response.data
-      console.log(user)
       dispatch(login(user))
       history.push('/')
     })
