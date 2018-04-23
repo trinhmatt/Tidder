@@ -9,11 +9,13 @@ class Post extends React.Component {
     this.state = {
       comment: '',
       postData: '',
-      allComments: []
+      allComments: [],
+      isAuthor: false
     }
   }
   componentDidMount() {
     let allComments = [];
+    let isAuthor = false;
 
     //If the user trys to access the page without going through the react router
     //I.e. directly entering the URL in the browser
@@ -26,6 +28,9 @@ class Post extends React.Component {
               <div id={response.data.comments[i]._id}>
                 <button id='up-comment' onClick={this.commentVote}>Upvote</button>
                 <button id='down-comment' onClick={this.commentVote}>Downvote</button>
+                { (response.data.comments[i].author === this.props.auth.username) ?
+                    <button onClick={this.deleteComment}>Delete</button> : ''
+                }
               </div>
               <p>{response.data.comments[i].body}</p>
               <p>Author: {response.data.comments[i].author}</p>
@@ -34,7 +39,11 @@ class Post extends React.Component {
           allComments.push(commentDiv)
         }
 
-        this.setState( () => ({postData: response.data, allComments}))
+        if (response.data.author === this.props.auth.username) {
+          isAuthor = true;
+        }
+
+        this.setState( () => ({postData: response.data, allComments, isAuthor}))
       })
       .catch( (error) => console.log(error))
 
@@ -123,6 +132,18 @@ class Post extends React.Component {
         this.setState( () => ({message: 'Something went wrong'}))
       })
   }
+  deletePost = () => {
+    axios.delete(`${this.props.location.pathname}/delete`, { data: { id: this.props.match.params.id }})
+      .then( () => this.props.history.push('/deleteconfirm'))
+      .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
+  }
+  deleteComment = (e) => {
+    const commentID = e.target.parentNode.id
+
+    axios.delete(`${this.props.location.pathname}/comment/delete`, { data: { id: commentID } })
+      .then( () => this.props.history.push('/deleteconfirm'))
+      .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
+  }
   render() {
     return (
       <div>
@@ -130,6 +151,7 @@ class Post extends React.Component {
         <h1>
           {this.props.location.state ? this.props.location.state.title : this.state.postData.title}
         </h1>
+        {this.state.isAuthor ? <button onClick={this.deletePost}>Delete post</button> : ''}
         <p>
           {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
         </p>

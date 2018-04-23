@@ -14,6 +14,7 @@ import CreatePost from '../components/CreatePost'
 import Unauthorized from '../components/Unauthorized'
 import NotFound from '../components/NotFound'
 import Post from '../components/Post'
+import DeleteConfirmation from '../components/DeleteConfirmation'
 
 
 export const history = createHistory()
@@ -36,6 +37,7 @@ export const AppRouter = () => (
         <Route path='/createsubtidder/success' component={CreateSuccess} />
         <Route path='/createsubtidder/fail' component={CreateFail} />
         <Route path='/unauthorized' component={Unauthorized} />
+        <Route path='/deleteconfirm' component={DeleteConfirmation} />
       </Switch>
     </div>
   </Router>

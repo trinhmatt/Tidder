@@ -73,7 +73,6 @@ class CreatePost extends React.Component {
 
     axios.post(`${this.props.location.pathname}`, post)
       .then( (response) => {
-        console.log(response)
         this.props.history.push(`${this.props.location.pathname}/success`)
       })
       .catch( () => this.props.history.push(`${this.props.location.pathname}/fail`))

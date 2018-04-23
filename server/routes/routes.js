@@ -91,6 +91,26 @@ router.post('/t/:sub/create', (req, res) => {
   })
 })
 
+router.delete('/t/:sub/:postID/delete', (req, res) => {
+  Post.findByIdAndRemove(req.body.id, (err) => {
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      res.send('Post deleted')
+    }
+  })
+})
+
+router.delete('/t/:sub/:postID/comment/delete', (req, res) => {
+  Comment.findByIdAndRemove(req.body.id, (err) => {
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      res.send('Post deleted')
+    }
+  })
+})
+
 //Send post information to the client if a user trys to go to the post page without using react-Router
   //I.e. if they enter the post url into the browser and directly access the post page
 router.post('/t/:sub/:postID', (req, res) => {
@@ -326,6 +346,8 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     }
   })
 });
+
+
 
 
 module.exports = router;
