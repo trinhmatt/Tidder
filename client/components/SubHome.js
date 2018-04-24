@@ -12,46 +12,57 @@ class SubHome extends React.Component {
       message: '',
       subData: {},
       typeLinks: [],
-      allPosts: []
+      allPosts: [],
+      isSubbed: false
     }
   }
   componentDidMount() {
     axios.post(`/t/${this.props.match.params.sub}`)
       .then( (response) => {
-        const subData = response.data
+        const subData = response.data;
+        let isSubbed = false;
 
-        if (!subData) {
+        console.log(subData)
+
+        if (!subData.sub._id) {
           this.props.history.push('/404')
         } else {
           let allPosts = [];
           //Set up posts for render
-          for (let i = 0; i<subData.posts.length; i++) {
+          for (let i = 0; i<subData.sub.posts.length; i++) {
             const post = (
-              <div key={subData.posts[i]._id}>
-                <p>Votes: {subData.posts[i].votes.up + subData.posts[i].votes.down}</p>
+              <div key={subData.sub.posts[i]._id}>
+                <p>Votes: {subData.sub.posts[i].votes.up + subData.sub.posts[i].votes.down}</p>
                 <Link
                   to={{
-                    pathname: `/t/${this.props.match.params.sub}/${subData.posts[i]._id}`,
+                    pathname: `/t/${this.props.match.params.sub}/${subData.sub.posts[i]._id}`,
                     state: {
-                      title: subData.posts[i].title,
-                      body: subData.posts[i].body,
-                      author: subData.posts[i].author
+                      title: subData.sub.posts[i].title,
+                      body: subData.sub.posts[i].body,
+                      author: subData.sub.posts[i].author
                     }
-                  }}>{subData.posts[i].title}
+                  }}>{subData.sub.posts[i].title}
                 </Link>
               </div>
             )
             allPosts.push(post)
           }
 
+          if (subData.isSubbed) {
+            console.log('isSubbed was true')
+            isSubbed = true
+          }
+
+          console.log(isSubbed)
+
           // Generate create links needs to be called after subData is set
-          this.setState( () => ({subData, allPosts}), this.generateCreateLinks)
+          this.setState( () => ({subData: subData.sub, allPosts, isSubbed}), this.generateCreateLinks)
         }
       })
       .catch( () => console.log('could not get sub data'))
   }
   subscribeToSub = () => {
-    axios.post(`/subscribe/${this.props.id}`, this.state.subData)
+    axios.post(`/subscribe/${this.props.auth.id}`, this.state.subData)
       .then( () => {
         this.setState(() => ({message: 'Subscription succesful'}))
       })
@@ -76,6 +87,7 @@ class SubHome extends React.Component {
         typeLinks.push(typeLink)
       }
     }
+
     this.setState( () => ({typeLinks}))
   }
   render() {
@@ -84,7 +96,7 @@ class SubHome extends React.Component {
         <h1>{this.state.subData.name}</h1>
         <h2>{this.state.subData.description}</h2>
         {this.state.message}
-        {this.props.id ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
+        {(this.props.auth.id && !this.state.isSubbed) ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
         {this.state.typeLinks}
         {this.state.allPosts}
       </div>
@@ -93,7 +105,7 @@ class SubHome extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  id: state.auth.id
+  auth: state.auth
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -56,7 +56,23 @@ router.post('/api/t/:sub/:postID/comment', (req, res) => {
 router.post('/t/:sub', (req, res) => {
   Sub.findOne({name: req.params.sub}).populate('posts').exec( (err, sub) => {
     if (!err) {
-      res.send(sub)
+      //need to store sub data in a new object because I dont want to add isSubbed into the database object
+      let subData = {sub: sub};
+
+      //Check if user is subbed to sub
+      //Cant do this client side because the state is not available to lifecycle methods on initialization
+      if (req.user) {
+
+        for (let i = 0; i<req.user.subs.length; i++) {
+          if (req.user.subs[i].toString() === sub._id.toString()) {
+            subData.isSubbed = true
+            break
+          }
+        }
+        res.send(subData)
+      } else {
+        res.send(subData)
+      }
     } else {
       console.log(err)
     }
