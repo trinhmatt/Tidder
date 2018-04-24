@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
+import Modal from 'react-modal'
 
 class Post extends React.Component {
   constructor(props) {
@@ -10,7 +11,10 @@ class Post extends React.Component {
       comment: '',
       postData: '',
       allComments: [],
-      isAuthor: false
+      isAuthor: false,
+      isModalOpen: false,
+      typeOfModal: null,
+      commentID: null
     }
   }
   componentDidMount() {
@@ -25,11 +29,11 @@ class Post extends React.Component {
         for (let i = 0; i<response.data.comments.length; i++) {
           const commentDiv = (
             <div key={i}>
-              <div id={response.data.comments[i]._id}>
+              <div>
                 <button id='up-comment' onClick={this.commentVote}>Upvote</button>
                 <button id='down-comment' onClick={this.commentVote}>Downvote</button>
                 { (response.data.comments[i].author === this.props.auth.username) ?
-                    <button onClick={this.deleteComment}>Delete</button> : ''
+                    <button id={response.data.comments[i]._id} onClick={this.openModal}>Delete</button> : ''
                 }
               </div>
               <p>{response.data.comments[i].body}</p>
@@ -132,13 +136,30 @@ class Post extends React.Component {
         this.setState( () => ({message: 'Something went wrong'}))
       })
   }
+  openModal = (e) => {
+    let typeOfModal;
+    let commentID = null;
+
+    //Need to check type so I only need to use one Modal
+    if (e.target.id.indexOf('post') > -1) {
+      typeOfModal = 'post'
+    } else {
+      commentID = e.target.id
+      typeOfModal = 'comment'
+    }
+
+    this.setState( () => ({isModalOpen: true, typeOfModal, commentID}))
+  }
+  closeModal = () => {
+    this.setState( () => ({isModalOpen: false}))
+  }
   deletePost = () => {
     axios.delete(`${this.props.location.pathname}/delete`, { data: { id: this.props.match.params.id }})
       .then( () => this.props.history.push('/deleteconfirm'))
       .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
   }
   deleteComment = (e) => {
-    const commentID = e.target.parentNode.id
+    const commentID = this.state.commentID
 
     axios.delete(`${this.props.location.pathname}/comment/delete`, { data: { id: commentID } })
       .then( () => this.props.history.push('/deleteconfirm'))
@@ -151,7 +172,7 @@ class Post extends React.Component {
         <h1>
           {this.props.location.state ? this.props.location.state.title : this.state.postData.title}
         </h1>
-        {this.state.isAuthor ? <button onClick={this.deletePost}>Delete post</button> : ''}
+        {this.state.isAuthor ? <button id='post-delete' onClick={this.openModal}>Delete post</button> : ''}
         <p>
           {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
         </p>
@@ -176,6 +197,15 @@ class Post extends React.Component {
             </form>
           </div>
         ) : ''}
+        <Modal
+          isOpen={this.state.isModalOpen}
+          onRequestClose={this.closeModal}
+          contentLabel="Delete Confirmation"
+        >
+          <h2>Are you sure you want to delete this {this.state.typeOfModal}?</h2>
+          <button onClick={((this.state.typeOfModal === 'post') ? this.deletePost : this.deleteComment)}>Yes</button>
+          <button onClick={this.closeModal}>No</button>
+        </Modal>
       </div>
     )
   }
