@@ -165,6 +165,18 @@ class Post extends React.Component {
       .then( () => this.props.history.push('/deleteconfirm'))
       .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
   }
+  editPost = () => {
+    let postData = this.state.postData
+    //Need votes and comments to be able to be added during editing
+    //Update does not require votes or comments
+    delete postData.votes
+    delete postData.comments
+
+    this.props.history.push({
+      pathname: `${this.props.location.pathname}/edit`,
+      state: { postData }
+    })
+  }
   render() {
     return (
       <div>
@@ -173,6 +185,7 @@ class Post extends React.Component {
           {this.props.location.state ? this.props.location.state.title : this.state.postData.title}
         </h1>
         {this.state.isAuthor ? <button id='post-delete' onClick={this.openModal}>Delete post</button> : ''}
+        {this.state.isAuthor ? <button onClick={this.editPost}>Edit post</button> : ''}
         <p>
           {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
         </p>

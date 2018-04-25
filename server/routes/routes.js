@@ -107,6 +107,18 @@ router.post('/t/:sub/create', (req, res) => {
   })
 })
 
+router.put('/t/:sub/:postID/edit', (req, res) => {
+  const update = req.body;
+
+  Post.findByIdAndUpdate(req.params.postID, update, (err) => {
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      res.send('Success')
+    }
+  })
+})
+
 router.delete('/t/:sub/:postID/delete', (req, res) => {
   Post.findByIdAndRemove(req.body.id, (err) => {
     if (err) {

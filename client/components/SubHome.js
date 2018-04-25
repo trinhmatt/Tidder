@@ -22,8 +22,6 @@ class SubHome extends React.Component {
         const subData = response.data;
         let isSubbed = false;
 
-        console.log(subData)
-
         if (!subData.sub._id) {
           this.props.history.push('/404')
         } else {
@@ -49,11 +47,8 @@ class SubHome extends React.Component {
           }
 
           if (subData.isSubbed) {
-            console.log('isSubbed was true')
             isSubbed = true
           }
-
-          console.log(isSubbed)
 
           // Generate create links needs to be called after subData is set
           this.setState( () => ({subData: subData.sub, allPosts, isSubbed}), this.generateCreateLinks)

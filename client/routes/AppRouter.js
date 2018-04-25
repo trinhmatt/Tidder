@@ -15,7 +15,8 @@ import Unauthorized from '../components/Unauthorized'
 import NotFound from '../components/NotFound'
 import Post from '../components/Post'
 import DeleteConfirmation from '../components/DeleteConfirmation'
-
+import EditPost from '../components/EditPost'
+import EditConfirmation from '../components/EditConfirmation'
 
 export const history = createHistory()
 
@@ -28,6 +29,9 @@ export const AppRouter = () => (
         <Route path='/t/:sub' component={SubHome} exact={true} />
         <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
         <Route path='/t/:sub/:id' component={Post} exact={true} />
+        <PrivateRoute path='/t/:sub/:id/edit' component={EditPost} exact={true} />
+        <Route path='/t/:sub/:id/edit/success' component={EditConfirmation} />
+        <Route path='/t/:sub/:id/edit/fail' component={CreateFail} />
         <Route path='/t/:sub/create/success' component={CreateSuccess} />
         <Route path='/t/:sub/create/fail' component={CreateFail} />
         <Route path='/login' component={Login} />
