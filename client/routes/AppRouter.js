@@ -30,6 +30,7 @@ export const AppRouter = () => (
         <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
         <Route path='/t/:sub/:id' component={Post} exact={true} />
         <PrivateRoute path='/t/:sub/:id/edit' component={EditPost} exact={true} />
+        <PrivateRoute path='/t/:sub/:id/editcomment' component={EditPost} exact={true} />
         <Route path='/t/:sub/:id/edit/success' component={EditConfirmation} />
         <Route path='/t/:sub/:id/edit/fail' component={CreateFail} />
         <Route path='/t/:sub/create/success' component={CreateSuccess} />

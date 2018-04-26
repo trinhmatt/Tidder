@@ -32,9 +32,12 @@ class Post extends React.Component {
               <div>
                 <button id='up-comment' onClick={this.commentVote}>Upvote</button>
                 <button id='down-comment' onClick={this.commentVote}>Downvote</button>
-                { (response.data.comments[i].author === this.props.auth.username) ?
-                    <button id={response.data.comments[i]._id} onClick={this.openModal}>Delete</button> : ''
-                }
+                { (response.data.comments[i].author === this.props.auth.username) ? (
+                  <div id={response.data.comments[i]._id}>
+                    <button onClick={this.openModal}>Delete</button>
+                    <button onClick={this.editComment}>Edit</button>
+                  </div>
+                ) : '' }
               </div>
               <p>{response.data.comments[i].body}</p>
               <p>Author: {response.data.comments[i].author}</p>
@@ -144,7 +147,7 @@ class Post extends React.Component {
     if (e.target.id.indexOf('post') > -1) {
       typeOfModal = 'post'
     } else {
-      commentID = e.target.id
+      commentID = e.target.parentNode.id
       typeOfModal = 'comment'
     }
 
@@ -166,15 +169,32 @@ class Post extends React.Component {
       .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
   }
   editPost = () => {
-    let postData = this.state.postData
+    let data = this.state.postData
     //Need votes and comments to be able to be added during editing
     //Update does not require votes or comments
-    delete postData.votes
-    delete postData.comments
+    delete data.votes
+    delete data.comments
 
     this.props.history.push({
       pathname: `${this.props.location.pathname}/edit`,
-      state: { postData }
+      state: { data }
+    })
+  }
+  editComment = (e) => {
+    let data;
+
+    for (let i = 0; i<this.state.postData.comments.length; i++) {
+      //Comment ID is stored in parent div as the ID
+      if (this.state.postData.comments[i]._id === e.target.parentNode.id) {
+        data = this.state.postData.comments[i]
+        delete data.votes
+        break
+      }
+    }
+
+    this.props.history.push({
+      pathname: `${this.props.location.pathname}/editcomment`,
+      state: { data }
     })
   }
   render() {

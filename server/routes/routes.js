@@ -51,6 +51,18 @@ router.post('/api/t/:sub/:postID/comment', (req, res) => {
   })
 })
 
+router.put('/t/:sub/:postID/editcomment', (req, res) => {
+  const update = req.body;
+
+  Comment.findByIdAndUpdate(req.body._id, update, (err) => {
+    if (err) {
+      console.log(err.errmsg)
+    } else {
+      res.send('Success')
+    }
+  })
+})
+
 //To send the sub information to the client
 //Made it a post so that you can directly go to a sub home without navigating from the main page
 router.post('/t/:sub', (req, res) => {
