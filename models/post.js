@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const PostSchema = new mongoose.Schema({
   title: {type: String, required: true},
   body: String,
+  link: String,
+  postType: {type: String, required: true},
   author: {type: String, required: true},
   sub: {
     type: mongoose.Schema.Types.ObjectId,

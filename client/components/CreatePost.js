@@ -65,6 +65,7 @@ class CreatePost extends React.Component {
     const post = {
       title: this.state.title,
       body: this.state.body,
+      postType: this.props.location.state.type,
       author: this.props.username,
       sub: this.props.location.state.subId,
       votes: {up: 0, down: 0}

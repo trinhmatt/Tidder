@@ -100,9 +100,9 @@ router.post('/t/:sub/create', (req, res) => {
 
   Sub.findById(id, (err, foundSub) => {
     //Set sub to the found sub for correct association in DB
-    post.sub = foundSub
+    post.sub = foundSub._id
     if (err) {
-      console.log(err.errmsg)
+      console.log(err)
     } else {
       Post.create(post, (err, newPost) => {
         if (err) {

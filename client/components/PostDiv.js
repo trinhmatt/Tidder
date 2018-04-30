@@ -8,7 +8,13 @@ class PostDiv extends React.Component {
     super(props)
 
     this.state = {
-      message: ''
+      message: '',
+      pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`
+    }
+  }
+  componentDidMount() {
+    if (this.props.postData.postType.indexOf('text') < 0) {
+      this.setState( () => ({pathname: this.props.postData.body}))
     }
   }
   onVoteClick = (e) => {
@@ -49,16 +55,19 @@ class PostDiv extends React.Component {
           <button onClick={this.onVoteClick}>Downvote</button>
         </div>
         <p>Votes: {this.props.postData.votes.up + this.props.postData.votes.down}</p>
-        <Link
-          to={{
-            pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`,
-            state: {
-              title: this.props.postData.title,
-              body: this.props.postData.body,
-              author: this.props.postData.author
-            }
-          }}>{this.props.postData.title}
-        </Link>
+        <a href={this.state.pathname}>{this.props.postData.title}</a>
+        <div>
+          <Link
+            to={{
+              pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`,
+              state: {
+                title: this.props.postData.title,
+                body: this.props.postData.body,
+                author: this.props.postData.author
+              }
+            }}>Comments
+          </Link>
+        </div>
       </div>
     )
   }
