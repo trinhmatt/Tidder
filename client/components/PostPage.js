@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 import Modal from 'react-modal'
 
-class Post extends React.Component {
+class PostPage extends React.Component {
   constructor(props) {
     super(props)
 
@@ -101,7 +101,7 @@ class Post extends React.Component {
       vote = -1
     }
 
-    axios.post(`${this.props.location.pathname}/vote`, {vote: vote, user: this.props.auth.id})
+    axios.post(`/${this.props.match.params.id}/vote`, {vote: vote, user: this.props.auth.id})
       .then( (response) => {
         if (response.data === 'Error') {
           this.setState( () => ({message: 'Something went wrong'}))
@@ -248,4 +248,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth
 })
 
-export default connect(mapStateToProps)(Post);
+export default connect(mapStateToProps)(PostPage);

@@ -22,7 +22,6 @@ class CreatePost extends React.Component {
             placeholder='Post Body'
             value={this.state.body}
             onChange={this.onBodyChange}
-            required
           />
         )
         return inputToRender

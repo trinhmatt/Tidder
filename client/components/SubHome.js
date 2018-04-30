@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import PostDiv from './PostDiv'
 
 class SubHome extends React.Component {
   constructor(props) {
@@ -29,19 +30,7 @@ class SubHome extends React.Component {
           //Set up posts for render
           for (let i = 0; i<subData.sub.posts.length; i++) {
             const post = (
-              <div key={subData.sub.posts[i]._id}>
-                <p>Votes: {subData.sub.posts[i].votes.up + subData.sub.posts[i].votes.down}</p>
-                <Link
-                  to={{
-                    pathname: `/t/${this.props.match.params.sub}/${subData.sub.posts[i]._id}`,
-                    state: {
-                      title: subData.sub.posts[i].title,
-                      body: subData.sub.posts[i].body,
-                      author: subData.sub.posts[i].author
-                    }
-                  }}>{subData.sub.posts[i].title}
-                </Link>
-              </div>
+              <PostDiv key={i} postData={subData.sub.posts[i]} match={this.props.match}/>
             )
             allPosts.push(post)
           }

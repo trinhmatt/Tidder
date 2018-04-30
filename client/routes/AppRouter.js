@@ -13,7 +13,7 @@ import SubHome from '../components/SubHome'
 import CreatePost from '../components/CreatePost'
 import Unauthorized from '../components/Unauthorized'
 import NotFound from '../components/NotFound'
-import Post from '../components/Post'
+import PostPage from '../components/PostPage'
 import DeleteConfirmation from '../components/DeleteConfirmation'
 import EditPost from '../components/EditPost'
 import EditConfirmation from '../components/EditConfirmation'
@@ -28,7 +28,7 @@ export const AppRouter = () => (
         <Route path='/404' component={NotFound} exact={true} />
         <Route path='/t/:sub' component={SubHome} exact={true} />
         <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
-        <Route path='/t/:sub/:id' component={Post} exact={true} />
+        <Route path='/t/:sub/:id' component={PostPage} exact={true} />
         <PrivateRoute path='/t/:sub/:id/edit' component={EditPost} exact={true} />
         <PrivateRoute path='/t/:sub/:id/editcomment' component={EditPost} exact={true} />
         <Route path='/t/:sub/:id/edit/success' component={EditConfirmation} />

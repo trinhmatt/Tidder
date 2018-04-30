@@ -164,7 +164,7 @@ router.post('/t/:sub/:postID', (req, res) => {
 })
 
 //To vote on a post
-router.post('/t/:sub/:postID/vote', (req, res) => {
+router.post('/:postID/vote', (req, res) => {
   Post.findOne({_id: req.params.postID}, (err, post) => {
     if (err) {
       console.log(err.errmsg)
