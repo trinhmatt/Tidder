@@ -8,46 +8,27 @@ class CreatePost extends React.Component {
 
     this.state = {
       title: '',
-      body: ''
+      body: '',
+      link: ''
     }
   }
   generateInput = () => {
     let inputToRender;
 
     //Check what type of post this is supposed to be and render the appropriate input
-    switch (this.props.location.state.type) {
-      case 'text':
-        inputToRender = (
-          <textarea
-            placeholder='Post Body'
-            value={this.state.body}
-            onChange={this.onBodyChange}
-          />
-        )
-        return inputToRender
-      case 'picture':
-        inputToRender = (
-          <input
-            placeholder='link'
-            type='text'
-            value={this.state.body}
-            onChange={this.onBodyChange}
-            required
-          />
-        )
-        return inputToRender
-      case 'video':
-        inputToRender = (
-          <input
-            placeholder='link'
-            type='text'
-            value={this.state.body}
-            onChange={this.onBodyChange}
-            required
-          />
-        )
-        return inputToRender
+    if (this.props.location.state.type.indexOf('text') < 0) {
+      inputToRender = (
+        <input
+          placeholder='link'
+          type='text'
+          value={this.state.link}
+          onChange={this.onLinkChange}
+          required
+        />
+      )
+      return inputToRender
     }
+    return null
   }
   onBodyChange = (e) => {
     const body = e.target.value
@@ -59,12 +40,18 @@ class CreatePost extends React.Component {
 
     this.setState( () => ({title}))
   }
+  onLinkChange = (e) => {
+    const link = e.target.value
+
+    this.setState( () => ({link}))
+  }
   createPost = (e) => {
     e.preventDefault();
 
     const post = {
       title: this.state.title,
       body: this.state.body,
+      link: this.state.link,
       postType: this.props.location.state.type,
       author: this.props.username,
       sub: this.props.location.state.subId,
@@ -85,10 +72,15 @@ class CreatePost extends React.Component {
         <form onSubmit={this.createPost}>
           <input
             type='text'
-            placeholder='title'
+            placeholder='Title'
             value={this.state.title}
             onChange={this.onTitleChange}
             required
+          />
+          <textarea
+            placeholder='Post Body'
+            value={this.state.body}
+            onChange={this.onBodyChange}
           />
           {this.generateInput()}
           <button>Submit</button>

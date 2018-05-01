@@ -14,7 +14,7 @@ class PostDiv extends React.Component {
   }
   componentDidMount() {
     if (this.props.postData.postType.indexOf('text') < 0) {
-      this.setState( () => ({pathname: this.props.postData.body}))
+      this.setState( () => ({pathname: this.props.postData.link}))
     }
   }
   onVoteClick = (e) => {
@@ -55,6 +55,7 @@ class PostDiv extends React.Component {
           <button onClick={this.onVoteClick}>Downvote</button>
         </div>
         <p>Votes: {this.props.postData.votes.up + this.props.postData.votes.down}</p>
+        {/* Cannot use Link for some reason, it cuts off the pathname if conditionally rendered */}
         <a href={this.state.pathname}>{this.props.postData.title}</a>
         <div>
           <Link
