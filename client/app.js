@@ -5,6 +5,7 @@ import axios from 'axios'
 import AppRouter from './routes/AppRouter'
 import configureStore from '../store/configureStore'
 import { login } from '../store/actions/auth'
+import { getSubs } from '../store/actions/subs'
 
 const store = configureStore();
 
@@ -41,3 +42,4 @@ const authDispatch = () => {
 
 renderApp();
 authDispatch();
+store.dispatch(getSubs());

@@ -4,6 +4,7 @@ const PostSchema = new mongoose.Schema({
   title: {type: String, required: true},
   body: String,
   link: String,
+  dateCreated: String,
   postType: {type: String, required: true},
   author: {type: String, required: true},
   sub: {

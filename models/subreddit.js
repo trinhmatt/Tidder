@@ -14,7 +14,8 @@ const SubSchema = new mongoose.Schema({
     ref: 'User'
   },
   ageRestricted: Boolean,
-  permittedPosts: Object
+  permittedPosts: Object,
+  isDefault: Boolean 
 })
 
 module.exports = mongoose.model('Sub', SubSchema);

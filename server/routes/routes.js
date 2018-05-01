@@ -24,6 +24,16 @@ router.get('/currentuser', (req, res) => {
   }
 })
 
+router.get('/defaultsubs', (req, res) => {
+  Sub.find({ isDefault: true }).populate('posts').exec( (err, foundSubs) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.send(foundSubs)
+    }
+  })
+})
+
 //Create comment
 router.post('/api/t/:sub/:postID/comment', (req, res) => {
   let comment = req.body;
@@ -330,16 +340,32 @@ router.get('*', (req, res) => {
 //Create user
 router.post('/register', (req, res) => {
   const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
-  const username = new User({ username: req.body.username, subs: [], votedPosts: [] }),
-        password = req.body.password;
-  User.register(username, password, (err, user) => {
-    if (err){
+
+  //Find all the default subs and add them to the users subscription list
+  Sub.find({ isDefault: true }, (err, foundSubs) => {
+    if (err) {
       console.log(err)
+    } else {
+      let subs = [];
+
+      for (let i = 0; i<foundSubs.length; i++) {
+        subs.push(foundSubs[i]._id)
+      }
+
+      const username = new User({ username: req.body.username, subs, votedPosts: [] }),
+            password = req.body.password;
+
+      User.register(username, password, (err, user) => {
+        if (err){
+          console.log(err)
+        }
+        passport.authenticate('local')(req, res, () => {
+          res.render('index', {absolutePath})
+        })
+      })
     }
-    passport.authenticate('local')(req, res, () => {
-      res.render('index', {absolutePath})
-    })
   })
+
 })
 
 //Create subreddit
