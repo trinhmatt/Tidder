@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import moment from 'moment'
 
 class PostDiv extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class PostDiv extends React.Component {
     if (this.props.postData.postType.indexOf('text') < 0) {
       this.setState( () => ({pathname: this.props.postData.link}))
     }
+
   }
   onVoteClick = (e) => {
     //Check if user is logged in
@@ -68,6 +70,7 @@ class PostDiv extends React.Component {
               }
             }}>Comments
           </Link>
+          <p>Created on: {this.props.postData.dateCreated}</p>
         </div>
       </div>
     )

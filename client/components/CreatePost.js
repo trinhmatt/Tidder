@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
+import moment from 'moment'
 
 class CreatePost extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class CreatePost extends React.Component {
       title: this.state.title,
       body: this.state.body,
       link: this.state.link,
+      dateCreated: moment().format('MMMM Do YYYY, h:mm:ss a'),
       postType: this.props.location.state.type,
       author: this.props.username,
       sub: this.props.location.state.subId,
