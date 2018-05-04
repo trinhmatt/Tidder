@@ -54,6 +54,7 @@ class CreatePost extends React.Component {
       body: this.state.body,
       link: this.state.link,
       dateCreated: moment().format('MMMM Do YYYY, h:mm:ss a'),
+      subName: this.props.match.params.sub,
       postType: this.props.location.state.type,
       author: this.props.username,
       sub: this.props.location.state.subId,

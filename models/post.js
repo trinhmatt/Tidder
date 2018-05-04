@@ -7,6 +7,7 @@ const PostSchema = new mongoose.Schema({
   dateCreated: String,
   postType: {type: String, required: true},
   author: {type: String, required: true},
+  subName: String,
   sub: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Sub'

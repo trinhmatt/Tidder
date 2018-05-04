@@ -71,7 +71,7 @@ class PostDiv extends React.Component {
         <div>
           <Link
             to={{
-              pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`,
+              pathname: `/t/${this.props.postData.subName}/${this.props.postData._id}`,
               state: {
                 title: this.props.postData.title,
                 body: this.props.postData.body,
@@ -79,7 +79,12 @@ class PostDiv extends React.Component {
               }
             }}>Comments
           </Link>
-          <p>Submitted {this.state.displayDifference}</p>
+          <p>
+            Submitted {this.state.displayDifference + ' '}
+            by {this.props.postData.author + ' '}
+            {(this.props.match.params.sub) ? '' : ('to ')}
+            {(this.props.match.params.sub) ? '' : (<Link to={`/t/${this.props.postData.subName}`}>t/{this.props.postData.subName}</Link>)}
+          </p>
         </div>
       </div>
     )
