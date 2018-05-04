@@ -14,9 +14,18 @@ class PostDiv extends React.Component {
     }
   }
   componentDidMount() {
+    //Set the link of the post title to the content if it is not a text post
     if (this.props.postData.postType.indexOf('text') < 0) {
       this.setState( () => ({pathname: this.props.postData.link}))
     }
+
+    //Compare the submission date with the current date
+    const postMoment = moment(this.props.postData.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
+    const currentMoment = moment();
+
+    const displayDifference = postMoment.from(currentMoment)
+
+    this.setState( () => ({displayDifference}))
 
   }
   onVoteClick = (e) => {
@@ -70,7 +79,7 @@ class PostDiv extends React.Component {
               }
             }}>Comments
           </Link>
-          <p>Created on: {this.props.postData.dateCreated}</p>
+          <p>Submitted {this.state.displayDifference}</p>
         </div>
       </div>
     )

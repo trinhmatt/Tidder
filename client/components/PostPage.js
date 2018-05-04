@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import Modal from 'react-modal'
+import moment from 'moment'
 
 class PostPage extends React.Component {
   constructor(props) {
@@ -67,7 +68,8 @@ class PostPage extends React.Component {
       body: this.state.comment,
       post: {},
       author: this.props.auth.username,
-      votes: {up: 0, down: 0}
+      votes: {up: 0, down: 0},
+      dateCreated: moment().format('MMMM Do YYYY, h:mm:ss a')
     }
 
     axios.post(`/api${this.props.location.pathname}/comment`, comment)

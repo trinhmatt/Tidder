@@ -10,7 +10,8 @@ const CommentSchema = new mongoose.Schema({
   votes: {
     up: {type: Number, default: 0},
     down: {type: Number, default: 0}
-  }
+  },
+  dateCreated: String
 })
 
 module.exports = mongoose.model('Comment', CommentSchema);
