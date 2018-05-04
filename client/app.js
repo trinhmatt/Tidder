@@ -20,6 +20,7 @@ let hasRendered = false;
 
 const renderApp = () => {
   if (!hasRendered) {
+    store.dispatch(getSubs());
     ReactDOM.render(jsx, document.getElementById('app'))
     hasRendered = true
   }
@@ -33,6 +34,9 @@ const authDispatch = () => {
         const user = response.data
 
         store.dispatch(login(user))
+        renderApp();
+      } else {
+        renderApp();
       }
     })
     .catch( (error) => {
@@ -40,6 +44,4 @@ const authDispatch = () => {
     })
 }
 
-renderApp();
 authDispatch();
-store.dispatch(getSubs());

@@ -28,6 +28,13 @@ class PostPage extends React.Component {
     axios.post(`${this.props.location.pathname}`)
       .then( (response) => {
         for (let i = 0; i<response.data.comments.length; i++) {
+
+          //Compare the submission date with the current date
+          const postMoment = moment(response.data.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
+          const currentMoment = moment();
+
+          const displayDifference = postMoment.from(currentMoment)
+
           const commentDiv = (
             <div key={i}>
               <div>
@@ -41,7 +48,7 @@ class PostPage extends React.Component {
                 ) : '' }
               </div>
               <p>{response.data.comments[i].body}</p>
-              <p>Author: {response.data.comments[i].author}</p>
+              <p>Submitted by {response.data.comments[i].author} {displayDifference}</p>
             </div>
           )
           allComments.push(commentDiv)
