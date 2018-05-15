@@ -104,7 +104,7 @@ router.post('/t/:sub', (req, res) => {
 //Create post
 //Needs to be before the fetch post to work
 router.post('/t/:sub/create', (req, res) => {
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js';
+  const absolutePath = req.protocol + '://' + req.get('host');
   let post = req.body;
   const id = req.body.sub;
 
@@ -315,7 +315,7 @@ router.post('/t/:sub/:postID/comment', (req, res) => {
 
 //To subscribe to a sub
 router.post('/subscribe/:id', (req, res) => {
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
+  const absolutePath = req.protocol + '://' + req.get('host');
   const sub = req.body;
 
   User.findById(req.params.id, (err, foundUser) => {
@@ -332,14 +332,14 @@ router.get('*', (req, res) => {
   //So that index can always find bundle.js in dev or prod
   //Required to get nested paths working (i.e. url/t/path)
   //Required in every route that renders index
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
+  const absolutePath = req.protocol + '://' + req.get('host');
   res.render('index', {absolutePath});
 });
 
 
 //Create user
 router.post('/register', (req, res) => {
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
+  const absolutePath = req.protocol + '://' + req.get('host');
 
   //Find all the default subs and add them to the users subscription list
   Sub.find({ isDefault: true }, (err, foundSubs) => {
@@ -370,7 +370,7 @@ router.post('/register', (req, res) => {
 
 //Create subreddit
 router.post('/createsubtidder', (req, res) => {
-  const absolutePath = req.protocol + '://' + req.get('host') + '/bundle.js'
+  const absolutePath = req.protocol + '://' + req.get('host');
   let sub = req.body;
   const id = req.body.admin;
   User.findById(id, (err, foundUser) => {

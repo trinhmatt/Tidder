@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const isProduction = false;
 
@@ -10,16 +11,18 @@ module.exports = {
   path: path.join(__dirname, 'client'),
   filename: 'bundle.js'
  },
+ plugins: [new MiniCssExtractPlugin({
+     filename: "styles.css"
+   })],
  module: {
   rules: [{
    test: /.jsx?$/,
    loader: 'babel-loader',
    exclude: /node_modules/,
-  },
-  {
-   test: /\.css$/,
-   loader: "style-loader!css-loader"
+  }, {
+    test: /\.s?css$/,
+    use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
   }]
-},
+  },
   devtool: isProduction ? 'source-map' : 'inline-source-map'
 }

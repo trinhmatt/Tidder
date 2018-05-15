@@ -4,6 +4,8 @@ import { Provider } from 'react-redux'
 import axios from 'axios'
 import AppRouter from './routes/AppRouter'
 import configureStore from '../store/configureStore'
+import './css/styles.scss'
+import 'normalize.css/normalize.css'
 import { login } from '../store/actions/auth'
 import { getSubs } from '../store/actions/subs'
 
