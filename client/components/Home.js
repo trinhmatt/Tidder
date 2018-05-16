@@ -40,8 +40,6 @@ class Home extends React.Component {
     return (
       <div>
         <h1>Test!!!</h1>
-        <Link to='/register'>Register</Link>
-        <Link to='/login'>Login</Link>
         <Link to='/createsubtidder'>Create subtidder</Link>
         <div>
           {this.state.postsToRender}

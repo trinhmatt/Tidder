@@ -2,6 +2,7 @@ import React from 'react'
 import { Router, Route, Switch } from 'react-router-dom'
 import createHistory from 'history/createBrowserHistory'
 import PrivateRoute from './PrivateRoute'
+import PublicRoute from './PublicRoute'
 import Home from '../components/Home'
 import Login from '../components/Login'
 import Register from '../components/Register'
@@ -24,25 +25,25 @@ export const AppRouter = () => (
   <Router history={history}>
     <div>
       <Switch>
-        <Route path='/' component={Home} exact={true} />
-        <Route path='/404' component={NotFound} exact={true} />
-        <Route path='/t/:sub' component={SubHome} exact={true} />
+        <PublicRoute path='/' component={Home} exact={true} />
+        <PublicRoute path='/404' component={NotFound} exact={true} />
+        <PublicRoute path='/t/:sub' component={SubHome} exact={true} />
         <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
-        <Route path='/t/:sub/:id' component={PostPage} exact={true} />
+        <PublicRoute path='/t/:sub/:id' component={PostPage} exact={true} />
         <PrivateRoute path='/t/:sub/:id/edit' component={EditPost} exact={true} />
         <PrivateRoute path='/t/:sub/:id/editcomment' component={EditPost} exact={true} />
-        <Route path='/t/:sub/:id/edit/success' component={EditConfirmation} />
-        <Route path='/t/:sub/:id/edit/fail' component={CreateFail} />
-        <Route path='/t/:sub/create/success' component={CreateSuccess} />
-        <Route path='/t/:sub/create/fail' component={CreateFail} />
-        <Route path='/login' component={Login} />
-        <Route path='/register' component={Register} exact={true} />
-        <Route path='/registersuccess' component={RegisterSuccess} />
+        <PublicRoute path='/t/:sub/:id/edit/success' component={EditConfirmation} />
+        <PublicRoute path='/t/:sub/:id/edit/fail' component={CreateFail} />
+        <PublicRoute path='/t/:sub/create/success' component={CreateSuccess} />
+        <PublicRoute path='/t/:sub/create/fail' component={CreateFail} />
+        <PublicRoute path='/login' component={Login} />
+        <PublicRoute path='/register' component={Register} exact={true} />
+        <PublicRoute path='/registersuccess' component={RegisterSuccess} />
         <PrivateRoute path='/createsubtidder' component={CreateSubtidder} exact={true} />
-        <Route path='/createsubtidder/success' component={CreateSuccess} />
-        <Route path='/createsubtidder/fail' component={CreateFail} />
-        <Route path='/unauthorized' component={Unauthorized} />
-        <Route path='/deleteconfirm' component={DeleteConfirmation} />
+        <PublicRoute path='/createsubtidder/success' component={CreateSuccess} />
+        <PublicRoute path='/createsubtidder/fail' component={CreateFail} />
+        <PublicRoute path='/unauthorized' component={Unauthorized} />
+        <PublicRoute path='/deleteconfirm' component={DeleteConfirmation} />
       </Switch>
     </div>
   </Router>
