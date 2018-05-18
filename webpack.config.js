@@ -15,14 +15,16 @@ module.exports = {
      filename: "styles.css"
    })],
  module: {
-  rules: [{
-   test: /.jsx?$/,
-   loader: 'babel-loader',
-   exclude: /node_modules/,
-  }, {
-    test: /\.s?css$/,
-    use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
-  }]
+  rules: [
+    {
+     test: /.js?$/,
+     loader: 'babel-loader',
+     exclude: /node_modules/,
+    }, {
+        test: /\.s?css$/,
+        use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' ]
+      }
+  ]
   },
   devtool: isProduction ? 'source-map' : 'inline-source-map'
 }
