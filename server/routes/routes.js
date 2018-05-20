@@ -14,7 +14,11 @@ router.get('/currentuser', (req, res) => {
     res.send(null)
   } else {
     //To populate the subs array with the subscribed subreddits
-    User.findById(req.user._id).populate({path: 'subs', populate: { path: 'posts' }}).exec( (err, foundUser) => {
+    User.findById(req.user._id).populate({
+      path: 'subs',
+      select: 'name posts',
+      populate: { path: 'posts' }}
+    ).exec( (err, foundUser) => {
       if (!err) {
         res.send(foundUser)
       } else {
@@ -404,7 +408,11 @@ router.post('/createsubtidder', (req, res) => {
 //Cannot use redirect here, all routes are handled on the client
 router.post('/login', passport.authenticate('local'), (req, res) => {
   //To populate the subs array with the subscribed subreddits
-  User.findById(req.user._id).populate({path: 'subs', populate: { path: 'posts' }}).exec( (err, foundUser) => {
+  User.findById(req.user._id).populate({
+    path: 'subs',
+    select: 'name posts',
+    populate: { path: 'posts' }}
+  ).exec( (err, foundUser) => {
     if (!err) {
       res.send(foundUser)
     } else {
