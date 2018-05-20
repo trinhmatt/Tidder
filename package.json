@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "webpack": "webpack --config webpack.config.js",
-    "start": "npm run webpack && nodemon -e scss --ignore client/bundle.js --exec babel-node -- bin/www"
+    "start": "npm run webpack && nodemon -e scss,js --ignore client/bundle.js --exec babel-node -- bin/www"
   },
   "dependencies": {
     "axios": "^0.18.0",

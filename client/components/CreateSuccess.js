@@ -23,7 +23,7 @@ class CreateSuccess extends React.Component {
     return (
       <div>
         <h1>{this.state.type} successfully created</h1>
-        <Link to='/'>Go home</Link>
+        <a href='/'>Go home</a>
       </div>
     )
   }
