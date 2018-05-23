@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
   votedPosts: [{
     post: String,
     vote: Number
+  }],
+  savedPosts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
   }]
 })
 

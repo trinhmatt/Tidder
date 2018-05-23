@@ -10,7 +10,8 @@ class PostDiv extends React.Component {
 
     this.state = {
       message: '',
-      pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`
+      pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`,
+      saved: 'Save'
     }
   }
   componentDidMount() {
@@ -25,7 +26,20 @@ class PostDiv extends React.Component {
 
     const displayDifference = postMoment.from(currentMoment)
 
-    this.setState( () => ({displayDifference}))
+    //Check if user has saved the post
+    let saved = 'Save';
+
+    if (this.props.auth.id) {
+      for (let i=0; i<this.props.auth.savedPosts.length; i++) {
+        if (this.props.auth.savedPosts[i].indexOf(this.props.postData._id) > -1) {
+          saved = 'Unsave'
+          break
+        }
+      }
+    }
+
+
+    this.setState( () => ({displayDifference, saved}))
 
   }
   onVoteClick = (e) => {
@@ -55,6 +69,30 @@ class PostDiv extends React.Component {
         })
     }
   }
+  savePost = () => {
+    if (this.state.saved.indexOf('Un') < 0) {
+      const saved = 'Unsave'
+
+      axios.put(`/${this.props.auth.id}/${this.props.postData._id}/savepost`)
+      .then( (response) => {
+        this.setState( () => ({saved}))
+      })
+      .catch( (error) => {
+        this.setState( () => ({message: 'Something went wrong, please try again.'}))
+      })
+
+    } else {
+      const saved = 'Save'
+
+      axios.put(`/${this.props.auth.id}/${this.props.postData._id}/unsavepost`)
+      .then( (response) => {
+        this.setState( () => ({saved}))
+      })
+      .catch( (error) => {
+        this.setState( () => ({message: 'Something went wrong, please try again.'}))
+      })
+    }
+  }
   render() {
     return (
       <div key={this.props.postData._id}>
@@ -79,6 +117,7 @@ class PostDiv extends React.Component {
               }
             }}>Comments
           </Link>
+          <button onClick={this.savePost}>{this.state.saved}</button>
           <p>
             Submitted {this.state.displayDifference + ' '}
             by {this.props.postData.author + ' '}

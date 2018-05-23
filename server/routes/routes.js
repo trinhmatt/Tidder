@@ -133,6 +133,7 @@ router.post('/t/:sub/create', (req, res) => {
   })
 })
 
+//Edit posts
 router.put('/t/:sub/:postID/edit', (req, res) => {
   const update = req.body;
 
@@ -140,6 +141,41 @@ router.put('/t/:sub/:postID/edit', (req, res) => {
     if (err) {
       console.log(err.errmsg)
     } else {
+      res.send('Success')
+    }
+  })
+})
+
+//Save posts
+router.put('/:userID/:postID/savepost', (req, res) => {
+
+  User.findById(req.params.userID, (err, foundUser) => {
+    if (err) {
+      res.send('Could not find user')
+    } else {
+      foundUser.savedPosts.push(req.params.postID)
+      foundUser.save()
+      res.send('Success')
+    }
+  })
+})
+
+//Unsave posts
+router.put('/:userID/:postID/unsavepost', (req, res) => {
+
+  User.findById(req.params.userID, (err, foundUser) => {
+    if (err) {
+      res.send('Could not find user')
+    } else {
+
+      for (let i=0; i<foundUser.savedPosts.length; i++) {
+        if (foundUser.savedPosts[i].toString().indexOf(req.params.postID) > -1) {
+          foundUser.savedPosts.splice(i, 1)
+          break
+        }
+      }
+
+      foundUser.save()
       res.send('Success')
     }
   })

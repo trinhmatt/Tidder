@@ -7,7 +7,8 @@ export const login = (user) => ({
   id: user._id,
   username: user.username,
   subs: user.subs,
-  votedPosts: user.votedPosts
+  votedPosts: user.votedPosts,
+  savedPosts: user.savedPosts
 })
 
 export const startLogin = (username, password) => {
