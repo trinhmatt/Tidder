@@ -18,6 +18,7 @@ import PostPage from '../components/PostPage'
 import DeleteConfirmation from '../components/DeleteConfirmation'
 import EditPost from '../components/EditPost'
 import EditConfirmation from '../components/EditConfirmation'
+import Profile from '../components/Profile'
 
 export const history = createHistory()
 
@@ -39,6 +40,7 @@ export const AppRouter = () => (
         <PublicRoute path='/login' component={Login} />
         <PublicRoute path='/register' component={Register} exact={true} />
         <PublicRoute path='/registersuccess' component={RegisterSuccess} />
+        <PublicRoute path='/user/:username' component={Profile} />
         <PrivateRoute path='/createsubtidder' component={CreateSubtidder} exact={true} />
         <PublicRoute path='/createsubtidder/success' component={CreateSuccess} />
         <PublicRoute path='/createsubtidder/fail' component={CreateFail} />
