@@ -1,22 +1,37 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { Navbar, Nav, NavDropdown, NavItem, MenuItem } from 'react-bootstrap'
+import { startLogout } from '../../store/actions/auth'
 
 const Header = (props) => (
   <div>
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <a className="navbar-brand" href="/">Tidder.</a>
-      {
-        props.auth.id ?
-          <div className='ml-auto'>
-            <Link to={`/user/${props.auth.username}`}>{props.auth.username}</Link>
-          </div> :
-          <div className='ml-auto'>
-            <Link to='/register'>Register</Link>
-            <Link className='header-login' to='/login'>Login</Link>
-          </div>
-      }
-    </nav>
+    <Navbar>
+      <Navbar.Header>
+        <Navbar.Brand>
+          <a href="/">Tidder</a>
+        </Navbar.Brand>
+      </Navbar.Header>
+      <Nav pullRight>
+        {
+          props.auth.id ?
+          <NavDropdown title={props.auth.username} id="basic-nav-dropdown">
+            <MenuItem href={`/user/${props.auth.username}`}>Profile</MenuItem>
+            <MenuItem divider />
+            <MenuItem onClick={ () => props.dispatch(startLogout())}>Logout</MenuItem>
+          </NavDropdown>
+           :
+           <div>
+             <NavItem href="/register">
+               Register
+             </NavItem>
+             <NavItem href="/login">
+               Login
+             </NavItem>
+           </div>
+        }
+      </Nav>
+    </Navbar>
   </div>
 )
 

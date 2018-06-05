@@ -457,6 +457,12 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
   })
 });
 
+//LOGOUT
+router.get('/logout', (req, res) => {
+  req.logout()
+  res.send('Logout succesful')
+});
+
 
 
 

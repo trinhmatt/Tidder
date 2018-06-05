@@ -26,3 +26,19 @@ export const startLogin = (username, password) => {
     .catch( () => console.log('login failed'))
   }
 }
+
+export const logout = () => ({
+  type: 'LOGOUT'
+})
+
+export const startLogout = () => {
+  return (dispatch) => {
+    axios.get('/logout')
+    .then( (response) => {
+
+      dispatch(logout())
+      history.push('/')
+    })
+    .catch( () => console.log('logout failed'))
+  }
+}

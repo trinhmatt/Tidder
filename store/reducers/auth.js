@@ -11,7 +11,7 @@ export default (state = {}, action) => {
         savedPosts: action.savedPosts
       }
     case 'LOGOUT':
-      return state;
+      return {};
     default:
       return state;
   }
