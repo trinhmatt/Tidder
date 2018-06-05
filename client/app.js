@@ -22,7 +22,6 @@ let hasRendered = false;
 
 const renderApp = () => {
   if (!hasRendered) {
-    store.dispatch(getSubs());
     ReactDOM.render(jsx, document.getElementById('app'))
     hasRendered = true
   }

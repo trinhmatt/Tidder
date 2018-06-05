@@ -13,11 +13,20 @@ class Home extends React.Component {
     }
   }
   componentDidMount() {
-    //This is needed if the user is pushed from another component without executing an HTTP request
-    //Only needed for users who log in
-      //NTS: Should probably find a better way to do this
-    if (this.state.allPosts.length === 0 && this.props.auth.subs) {
-      let allPosts = [];
+    this.props.dispatch(getSubs())
+  }
+  //Cannot set up posts to render on mount because the mounting occurs before state is mapped to props
+  componentDidUpdate() {
+    let allPosts = [];
+
+    if (this.state.allPosts.length === 0 && !this.props.auth.id) {
+
+      for (let i = 0; i<this.props.subs.length; i++) {
+        allPosts = allPosts.concat(this.props.subs[i].posts)
+      }
+
+      this.setState( () => ({allPosts}), this.generatePosts)
+    } else if (this.state.allPosts.length === 0 && this.props.auth.id) {
 
       for (let i = 0; i<this.props.auth.subs.length; i++) {
         allPosts = allPosts.concat(this.props.auth.subs[i].posts)
@@ -25,20 +34,6 @@ class Home extends React.Component {
 
       this.setState( () => ({allPosts}), this.generatePosts)
     }
-  }
-  //Cannot set up posts to render on mount because the mounting occurs before state is mapped to props
-  componentDidUpdate() {
-
-    if (this.state.allPosts.length === 0) {
-      let allPosts = [];
-
-      for (let i = 0; i<this.props.subs.length; i++) {
-        allPosts = allPosts.concat(this.props.subs[i].posts)
-      }
-
-      this.setState( () => ({allPosts}), this.generatePosts)
-    }
-
   }
   generatePosts = () => {
     let postsToRender = [];
