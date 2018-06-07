@@ -40,7 +40,8 @@ export const AppRouter = () => (
         <PublicRoute path='/login' component={Login} />
         <PublicRoute path='/register' component={Register} exact={true} />
         <PublicRoute path='/registersuccess' component={RegisterSuccess} />
-        <PublicRoute path='/user/:username' component={Profile} />
+        <PublicRoute path='/user/:username' component={Profile} exact={true} />
+        <PrivateRoute path='/user/:username/saved' component={Profile} />
         <PrivateRoute path='/createsubtidder' component={CreateSubtidder} exact={true} />
         <PublicRoute path='/createsubtidder/success' component={CreateSuccess} />
         <PublicRoute path='/createsubtidder/fail' component={CreateFail} />
