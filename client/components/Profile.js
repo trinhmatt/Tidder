@@ -7,27 +7,34 @@ import PostDiv from './PostDiv'
 
 class Profile extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       commentsToRender: [],
       postsToRender: [],
-      dataFound: false
+      dataFound: false,
+      savedLink: false
     }
   }
   componentDidMount() {
     axios.get(`/${this.props.match.params.username}/profiledata`)
     .then( (response) => {
-      this.setState( () => ({userData: response.data}))
+      //Mongo doesnt throw an error if nothing is found
+      //Needed in case the user doesnt exist
+      if (response.data.message) {
+        this.setState( () => ({error: 'Could not find user'}))
+      } else {
+        this.setState( () => ({userData: response.data, dataFound: true, savedLink: true}))
+      }
     })
     .catch( (err) => {
-      console.log(err)
+      this.setState( () => ({error: 'Could not find user'}))
     })
   }
   componentDidUpdate() {
     //FOr some reason this produces the maximum depth exceeded error
     //The components still render properly, do not know why it is throwing an error
-    if (!this.state.commentsFound) {
+    if (this.state.dataFound) {
       let commentsToRender = [];
       let postsToRender = [];
 
@@ -44,23 +51,21 @@ class Profile extends React.Component {
       for (let x = 0; x<this.state.userData.posts.length; x++) {
         const match = {params: {sub: this.state.userData.posts[x].subName}};
         const postComponent = (
-          <PostDiv postData={this.state.userData.posts[x]} match={match} />
+          <PostDiv key={this.state.userData.posts[x]._id} postData={this.state.userData.posts[x]} match={match} />
         );
         postsToRender.push(postComponent);
       }
 
-      this.setState( () => ({commentsToRender, postsToRender, dataFound: true}))
+      this.setState( () => ({commentsToRender, postsToRender, dataFound: false}))
     }
-    //In the case that the user has not created any comments
-    //Need to stop the lifecycle method from looping forever
-    this.setState( () => ({dataFound: true}))
-
   }
   render() {
     return (
       <div>
-        <h1>{this.props.match.params.username}</h1>
-        {this.props.auth.id ? <Link to={(this.props.location.pathname) + '/saved'}>Saved posts</Link> : ''}
+        {this.state.error ? <h1>{this.state.error}</h1> : <h1>{this.props.match.params.username}</h1>}
+        {(this.props.auth.id && this.state.savedLink) && <Link to={{
+          pathname: (this.props.location.pathname) + '/saved'
+        }}>Saved posts</Link>}
         <div>
           <h1>Comments</h1>
           {this.state.commentsToRender}

@@ -29,18 +29,19 @@ router.get('/currentuser', (req, res) => {
 })
 
 router.get('/:username/profiledata', (req, res) => {
-  Comment.find({author: req.params.username}).populate('post').exec( (err, foundComments) => {
+  User.find({username: req.params.username}).populate('savedPosts').exec( (err, foundSavedPosts) => {
     let errObj = {};
-    let response = {};
 
-    if (err) {
-      errObj.collection = 'Comment'
-      errObj.message = err
+    if (err || foundSavedPosts.length === 0) {
+      errObj.collection = 'SavedPosts'
+      errObj.message = 'Could not find user'
       res.send(errObj)
     } else {
-      User.find({username: req.params.username}).populate('savedPosts').exec( (err, foundSavedPosts) => {
+      Comment.find({author: req.params.username}).populate('post').exec( (err, foundComments) => {
+        let response = {};
+
         if (err) {
-          errObj.collection = 'SavedPosts'
+          errObj.collection = 'Comment'
           errObj.message = err
           res.send(errObj)
         } else {
@@ -51,13 +52,22 @@ router.get('/:username/profiledata', (req, res) => {
               res.send(errObj)
             } else {
               response.comments = foundComments
-              response.savedPosts = foundSavedPosts
               response.posts = foundPosts
               res.send(response)
             }
           })
         }
       })
+    }
+  })
+})
+
+router.get('/:username/saved', (req, res) => {
+  User.find({ username: req.params.username}).populate('savedPosts').exec( (err, foundPosts) => {
+    if (err) {
+      res.send(err)
+    } else {
+      res.send(foundPosts)
     }
   })
 })
