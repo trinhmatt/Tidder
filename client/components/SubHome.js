@@ -26,6 +26,9 @@ class SubHome extends React.Component {
           this.props.history.push('/404')
         } else {
           let allPosts = [];
+
+          subData.sub.posts.sort( (a, b) => (b.votes.up - b.votes.down) - (a.votes.up - a.votes.down));;
+
           //Set up posts for render
           for (let i = 0; i<subData.sub.posts.length; i++) {
             const post = (
