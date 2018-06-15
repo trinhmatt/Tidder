@@ -17,7 +17,12 @@ class PostDiv extends React.Component {
   componentDidMount() {
     //Set the link of the post title to the content if it is not a text post
     if (this.props.postData.postType.indexOf('text') < 0) {
-      this.setState( () => ({pathname: this.props.postData.link}))
+      this.setState( () => ({
+        pathname: this.props.postData.link,
+        votes: (this.props.postData.votes.up + this.props.postData.votes.down)
+      }))
+    } else {
+      this.setState( () => ({votes: (this.props.postData.votes.up + this.props.postData.votes.down)}))
     }
 
     //Compare the submission date with the current date
@@ -61,7 +66,7 @@ class PostDiv extends React.Component {
           if (response.data === 'Error') {
             this.setState( () => ({message: 'Something went wrong'}))
           } else {
-            this.setState( () => ({message: 'Vote succesful'}))
+            this.setState( (prevState) => ({message: 'Vote succesful', votes: prevState.votes + vote}))
           }
         })
         .catch( () => {
@@ -103,7 +108,7 @@ class PostDiv extends React.Component {
           <button id='up-post' onClick={this.onVoteClick}>Upvote</button>
           <button onClick={this.onVoteClick}>Downvote</button>
         </div>
-        <p>Votes: {this.props.postData.votes.up + this.props.postData.votes.down}</p>
+        <p>Votes: {this.state.votes}</p>
         {/* Cannot use Link for some reason, it cuts off the pathname if conditionally rendered */}
         <a href={this.state.pathname}>{this.props.postData.title}</a>
         <div>
