@@ -9,7 +9,6 @@ class SubHome extends React.Component {
     super(props)
 
     this.state = {
-      subData: '',
       message: '',
       subData: {},
       typeLinks: [],

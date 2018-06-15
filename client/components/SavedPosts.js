@@ -14,7 +14,6 @@ class SavedPosts extends React.Component {
     axios.get(`/${this.props.match.params.username}/saved`)
     .then( (response) => {
       let allSaved = [];
-      console.log(response.data)
       for (let i=0; i<response.data[0].savedPosts.length; i++) {
         const postDiv = <PostDiv postData={response.data[0].savedPosts[i]} match={{params: {sub: response.data[0].savedPosts[i].subName}}} />
         allSaved.push(postDiv)
