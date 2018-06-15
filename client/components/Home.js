@@ -37,6 +37,7 @@ class Home extends React.Component {
   }
   generatePosts = () => {
     let postsToRender = [];
+    this.state.allPosts.sort( (a, b) => (b.votes.up - b.votes.down) - (a.votes.up - a.votes.down));
 
     for (let n = 0; n<this.state.allPosts.length; n++) {
       const postDiv = <PostDiv key={n} postData={this.state.allPosts[n]} match={this.props.match} />
