@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
+import uuid from 'uuid'
 import { startCreateSub } from '../../store/actions/create'
 
 
@@ -12,6 +13,7 @@ class CreateSubtidder extends React.Component {
       name: '',
       desc: '',
       ageRestricted: false,
+      isPrivate: false,
       permittedPosts: {
         text: false,
         video: false,
@@ -25,6 +27,11 @@ class CreateSubtidder extends React.Component {
     const ageRestricted = e.target.value;
 
     this.setState( () => ({ageRestricted}))
+  }
+  onPrivateSelect = (e) => {
+    const isPrivate = e.target.value;
+
+    this.setState( () => ({isPrivate}))
   }
   onNameChange = (e) => {
     const name = e.target.value
@@ -51,12 +58,19 @@ class CreateSubtidder extends React.Component {
   createSubtidder = (e) => {
     e.preventDefault();
 
-    const sub = {
+    let sub = {
       name: this.state.name,
       description: this.state.desc,
       ageRestricted: this.state.ageRestricted,
       admin: this.props.auth.id,
-      permittedPosts: this.state.permittedPosts
+      permittedPosts: this.state.permittedPosts,
+      isPrivate: this.state.isPrivate
+    }
+
+    if (this.state.isPrivate) {
+      sub.subKey = uuid();
+    } else {
+      sub.subKey = '';
     }
 
     axios.post('/createsubtidder', sub)
@@ -64,12 +78,17 @@ class CreateSubtidder extends React.Component {
         if (response.data.indexOf('error') > -1) {
           this.setState( () => ({error: response.data}))
         } else {
-          this.props.history.push('/createsubtidder/success')
+          this.props.history.push({
+            pathname: '/createsubtidder/success',
+            state: { subKey: sub.subKey }
+          })
         }
       })
       .catch( (error) => {
-        console.log(error)
-        this.props.history.push('/createsubtidder/fail')
+        this.props.history.push({
+          pathname: '/createsubtidder/fail',
+          state: { error }
+        })
       })
   }
   render() {
@@ -99,6 +118,17 @@ class CreateSubtidder extends React.Component {
             </div>
             <div>
               <input type='radio' value={false} onClick={this.onRestrictSelect} />
+              <label>No</label>
+            </div>
+          </div>
+          <div>
+            <label>Private subreddit?</label>
+            <div>
+              <input type='radio' value={true} onClick={this.onPrivateSelect} />
+              <label>Yes</label>
+            </div>
+            <div>
+              <input type='radio' value={false} onClick={this.onPrivateSelect} />
               <label>No</label>
             </div>
           </div>
