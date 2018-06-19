@@ -44,7 +44,7 @@ class SubHome extends React.Component {
             isSubbed = true;
           }
 
-          if (subData.sub.isPrivate) {
+          if (subData.sub.isPrivate && !isSubbed) {
             blockAccess = true;
           }
 
