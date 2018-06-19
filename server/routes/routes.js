@@ -7,6 +7,14 @@ import Sub from '../../models/subreddit'
 import Post from '../../models/post'
 import Comment from '../../models/comment'
 
+//LOGOUT
+//MUST BE PLACED BEFORE THE CURRENT USER CHECK OR ELSE LOGOUT WILL NOT PERSIST ON PAGE REFRESH
+router.get('/logout', (req, res) => {
+  req.logout()
+  req.session.destroy()
+  res.send('Logout succesful')
+});
+
 // To get the currentUser data from backend
 // All GET routes must be declared before the catch all to ensure they get priority
 router.get('/currentuser', (req, res) => {
@@ -500,14 +508,6 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     }
   })
 });
-
-//LOGOUT
-router.get('/logout', (req, res) => {
-  req.logout()
-  res.send('Logout succesful')
-});
-
-
 
 
 module.exports = router;

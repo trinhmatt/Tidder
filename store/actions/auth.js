@@ -37,7 +37,7 @@ export const startLogout = () => {
     .then( (response) => {
 
       dispatch(logout())
-      history.push('/')
+      history.replace('/')
     })
     .catch( () => console.log('logout failed'))
   }
