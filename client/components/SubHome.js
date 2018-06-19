@@ -10,10 +10,12 @@ class SubHome extends React.Component {
 
     this.state = {
       message: '',
+      subPass: '',
       subData: {},
       typeLinks: [],
       allPosts: [],
-      isSubbed: false
+      isSubbed: false,
+      blockAccess: false
     }
   }
   componentDidMount() {
@@ -21,6 +23,7 @@ class SubHome extends React.Component {
       .then( (response) => {
         const subData = response.data;
         let isSubbed = false;
+        let blockAccess = false;
 
         if (!subData.sub._id) {
           this.props.history.push('/404')
@@ -38,11 +41,20 @@ class SubHome extends React.Component {
           }
 
           if (subData.isSubbed) {
-            isSubbed = true
+            isSubbed = true;
+          }
+
+          if (subData.sub.isPrivate) {
+            blockAccess = true;
           }
 
           // Generate create links needs to be called after subData is set
-          this.setState( () => ({subData: subData.sub, allPosts, isSubbed}), this.generateCreateLinks)
+          this.setState( () => ({
+            subData: subData.sub,
+            allPosts,
+            isSubbed,
+            blockAccess,
+          }), this.generateCreateLinks)
         }
       })
       .catch( () => console.log('could not get sub data'))
@@ -76,15 +88,50 @@ class SubHome extends React.Component {
 
     this.setState( () => ({typeLinks}))
   }
+  onPassChange = (e) => {
+    const subPass = e.target.value;
+
+    this.setState( () => ({subPass}))
+
+
+  }
+  onPassSubmit = (e) => {
+    e.preventDefault();
+
+    let blockAccess = true;
+
+    if (this.state.subPass === this.state.subData.subKey) {
+      blockAccess = false;
+    }
+
+    this.setState( () => ({blockAccess}))
+  }
   render() {
     return (
       <div>
-        <h1>{this.state.subData.name}</h1>
-        <h2>{this.state.subData.description}</h2>
-        {this.state.message}
-        {(this.props.auth.id && !this.state.isSubbed) ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
-        {this.state.typeLinks}
-        {this.state.allPosts}
+        { this.state.blockAccess ?
+          <div>
+            <h1>This is a private community</h1>
+            <p>Please enter the password in order to gain access</p>
+            <form onSubmit={this.onPassSubmit}>
+              <input
+                type='password'
+                value={this.state.subPass}
+                onChange={this.onPassChange}
+              />
+              <button>Submit</button>
+            </form>
+          </div> :
+          <div>
+            <h1>{this.state.subData.name}</h1>
+            <h2>{this.state.subData.description}</h2>
+            {this.state.message}
+            {(this.props.auth.id && !this.state.isSubbed) ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
+            {this.state.typeLinks}
+            {this.state.allPosts}
+          </div>
+        }
+
       </div>
     )
   }
