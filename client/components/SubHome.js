@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import Modal from 'react-modal'
 import PostDiv from './PostDiv'
 
 class SubHome extends React.Component {
@@ -10,6 +11,7 @@ class SubHome extends React.Component {
 
     this.state = {
       message: '',
+      openAdminControls: false,
       subPass: '',
       subData: {},
       typeLinks: [],
@@ -24,6 +26,8 @@ class SubHome extends React.Component {
         const subData = response.data;
         let isSubbed = false;
         let blockAccess = false;
+        let showPass = false;
+        let isAdmin = false;
 
         if (!subData.sub._id) {
           this.props.history.push('/404')
@@ -48,12 +52,19 @@ class SubHome extends React.Component {
             blockAccess = true;
           }
 
+          if (subData.sub.admin === this.props.auth.id) {
+            showPass = true
+            isAdmin = true
+          }
+
           // Generate create links needs to be called after subData is set
           this.setState( () => ({
             subData: subData.sub,
             allPosts,
             isSubbed,
             blockAccess,
+            showPass,
+            isAdmin
           }), this.generateCreateLinks)
         }
       })
@@ -106,6 +117,12 @@ class SubHome extends React.Component {
 
     this.setState( () => ({blockAccess}))
   }
+  openAdmin = () => {
+    this.setState( () => ({openAdminControls: true}))
+  }
+  closeAdminControls = () => {
+    this.setState( () => ({openAdminControls: false}))
+  }
   render() {
     return (
       <div>
@@ -125,13 +142,25 @@ class SubHome extends React.Component {
           <div>
             <h1>{this.state.subData.name}</h1>
             <h2>{this.state.subData.description}</h2>
+            {this.state.showPass && <h2>The password to the subtidder is: {this.state.subData.subKey}</h2>}
+            {this.state.isAdmin &&
+              <div>
+                <button onClick={this.openAdmin}>Admin controls</button>
+              </div>
+            }
             {this.state.message}
             {(this.props.auth.id && !this.state.isSubbed) ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
             {this.state.typeLinks}
             {this.state.allPosts}
+            <Modal
+              isOpen={this.state.openAdminControls}
+              onRequestClose={this.closeAdminControls}
+              contentLabel="Admin Controls"
+            >
+              <h1>Admin controls</h1>
+            </Modal>
           </div>
         }
-
       </div>
     )
   }
