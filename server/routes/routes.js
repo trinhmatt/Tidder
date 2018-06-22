@@ -492,6 +492,24 @@ router.post('/createsubtidder', (req, res) => {
   })
 })
 
+router.post('/:subID/addmod', (req, res) => {
+  User.find({username: req.body.newMod}, (err, foundUser) => {
+    if (err) {
+      res.send('User not found')
+    } else {
+      Sub.findById(req.params.subID, (err, foundSub) => {
+        if (err) {
+          res.send(err)
+        } else {
+          foundSub.mods.push(req.body.newMod)
+          foundSub.save()
+          res.send(foundSub)
+        }
+      })
+    }
+  })
+})
+
 //Login
 //Cannot use redirect here, all routes are handled on the client
 router.post('/login', passport.authenticate('local'), (req, res) => {

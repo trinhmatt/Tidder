@@ -12,6 +12,7 @@ class SubHome extends React.Component {
     this.state = {
       message: '',
       openAdminControls: false,
+      modDivs: [],
       subPass: '',
       subData: {},
       typeLinks: [],
@@ -118,10 +119,46 @@ class SubHome extends React.Component {
     this.setState( () => ({blockAccess}))
   }
   openAdmin = () => {
-    this.setState( () => ({openAdminControls: true}))
+    let modDivs = [];
+
+    for (let i = 0; i<this.state.subData.mods.length; i++) {
+      const modDiv = (
+        <div key={this.state.subData.mods[i]}>
+          <p>{this.state.subData.mods[i]}</p>
+        </div>
+      )
+      modDivs.push(modDiv)
+    }
+    this.setState( () => ({openAdminControls: true, modDivs}))
   }
   closeAdminControls = () => {
     this.setState( () => ({openAdminControls: false}))
+  }
+  onNewModChange = (e) => {
+    const newMod = e.target.value;
+
+    this.setState( () => ({newMod}))
+  }
+  addMod = () => {
+    const newMod = {newMod: this.state.newMod};
+
+    axios.post(`/${this.state.subData._id}/addmod`, newMod)
+      .then( (response) => {
+        if (response.data._id) {
+          const newModDiv = (
+            <div>
+              <p>{response.data.mods[-1]}</p>
+            </div>
+          )
+
+          this.setState( (prevState) => ({
+            modDivs: [...prevState.modDivs, newModDiv]
+          }))
+        }
+      })
+      .catch( (error) => {
+        console.log(error)
+      })
   }
   render() {
     return (
@@ -158,6 +195,18 @@ class SubHome extends React.Component {
               contentLabel="Admin Controls"
             >
               <h1>Admin controls</h1>
+              <div>
+                <h3>Moderators</h3>
+                {this.state.modDivs}
+                <p>Add a moderator</p>
+                <input
+                  type='text'
+                  value={this.state.newMod}
+                  onChange={this.onNewModChange}
+                  placeholder='username'
+                />
+                <button onClick={this.addMod}>Add mod</button>
+              </div>
             </Modal>
           </div>
         }
