@@ -18,7 +18,8 @@ class SubHome extends React.Component {
       typeLinks: [],
       allPosts: [],
       isSubbed: false,
-      blockAccess: false
+      blockAccess: false,
+      modalMessage: ''
     }
   }
   componentDidMount() {
@@ -145,15 +146,18 @@ class SubHome extends React.Component {
     axios.post(`/${this.state.subData._id}/addmod`, newMod)
       .then( (response) => {
         if (response.data._id) {
-          const newModDiv = (
+          const newModDiv = [(
             <div>
-              <p>{response.data.mods[-1]}</p>
+              <p>{newMod.newMod}</p>
             </div>
-          )
+          )]
 
           this.setState( (prevState) => ({
-            modDivs: [...prevState.modDivs, newModDiv]
+            modDivs: prevState.modDivs.concat(newModDiv),
+            modalMessage: 'Mod succesfully added'
           }))
+        } else {
+          this.setState( () => ({modalMessage: 'Could not add mod, please try again'}))
         }
       })
       .catch( (error) => {
@@ -197,6 +201,7 @@ class SubHome extends React.Component {
               <h1>Admin controls</h1>
               <div>
                 <h3>Moderators</h3>
+                <p>{this.state.modalMessage}</p>
                 {this.state.modDivs}
                 <p>Add a moderator</p>
                 <input
