@@ -493,9 +493,11 @@ router.post('/createsubtidder', (req, res) => {
 })
 
 router.post('/:subID/addmod', (req, res) => {
+  //Need to check if the user exists
   User.find({username: req.body.newMod}, (err, foundUser) => {
-    if (err) {
-      res.send('User not found')
+    //Mongo does not throw an error if the user was not found
+    if (foundUser.length === 0 || err) {
+      res.status(404).send({message: 'User not found'})
     } else {
       Sub.findById(req.params.subID, (err, foundSub) => {
         if (err) {
@@ -509,6 +511,10 @@ router.post('/:subID/addmod', (req, res) => {
     }
   })
 })
+
+// router.delete('/:subID/deletemod', (req, res) => {
+//   Sub.
+// })
 
 //Login
 //Cannot use redirect here, all routes are handled on the client

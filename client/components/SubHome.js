@@ -126,6 +126,7 @@ class SubHome extends React.Component {
       const modDiv = (
         <div key={this.state.subData.mods[i]}>
           <p>{this.state.subData.mods[i]}</p>
+          <button id={this.state.subData.mods[i]}>Delete mod</button>
         </div>
       )
       modDivs.push(modDiv)
@@ -149,19 +150,27 @@ class SubHome extends React.Component {
           const newModDiv = [(
             <div>
               <p>{newMod.newMod}</p>
+              <button id={newMod.newMod}>Remove mod</button>
             </div>
           )]
 
           this.setState( (prevState) => ({
             modDivs: prevState.modDivs.concat(newModDiv),
-            modalMessage: 'Mod succesfully added'
+            modalMessage: 'Mod succesfully added',
+            newMod: ''
           }))
-        } else {
-          this.setState( () => ({modalMessage: 'Could not add mod, please try again'}))
         }
       })
       .catch( (error) => {
-        console.log(error)
+        let modalMessage;
+
+        if (error.response.statusText === 'Not Found') {
+          modalMessage = 'User was not found, please try again'
+        } else {
+          modalMessage = 'Something went wrong, please wait and try again'
+        }
+
+        this.setState( () => ({modalMessage}))
       })
   }
   render() {
