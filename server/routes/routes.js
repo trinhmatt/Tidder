@@ -512,9 +512,25 @@ router.post('/:subID/addmod', (req, res) => {
   })
 })
 
-// router.delete('/:subID/deletemod', (req, res) => {
-//   Sub.
-// })
+router.delete('/:subID/deletemod', (req, res) => {
+  Sub.findById(req.params.subID, (err, foundSub) => {
+    if (!foundSub._id || err) {
+      res.status(404).send({message: 'The sub was not found, please try again'})
+    } else {
+
+      for (let i = 0; i<foundSub.mods.length; i++) {
+        if (foundSub.mods[i] === req.body.modToDelete) {
+          foundSub.mods.splice(i, 1)
+          break
+        }
+      }
+
+      foundSub.save()
+      res.send(foundSub)
+    }
+
+  })
+})
 
 //Login
 //Cannot use redirect here, all routes are handled on the client

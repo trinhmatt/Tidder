@@ -126,7 +126,7 @@ class SubHome extends React.Component {
       const modDiv = (
         <div key={this.state.subData.mods[i]}>
           <p>{this.state.subData.mods[i]}</p>
-          <button id={this.state.subData.mods[i]}>Delete mod</button>
+          <button onClick={this.deleteMod} id={this.state.subData.mods[i]}>Delete mod</button>
         </div>
       )
       modDivs.push(modDiv)
@@ -150,7 +150,7 @@ class SubHome extends React.Component {
           const newModDiv = [(
             <div>
               <p>{newMod.newMod}</p>
-              <button id={newMod.newMod}>Remove mod</button>
+              <button onClick={this.deleteMod} id={newMod.newMod}>Remove mod</button>
             </div>
           )]
 
@@ -160,6 +160,37 @@ class SubHome extends React.Component {
             newMod: ''
           }))
         }
+      })
+      .catch( (error) => {
+        let modalMessage;
+
+        if (error.response.statusText === 'Not Found') {
+          modalMessage = 'User was not found, please try again'
+        } else {
+          modalMessage = 'Something went wrong, please wait and try again'
+        }
+
+        this.setState( () => ({modalMessage}))
+      })
+  }
+  deleteMod = (e) => {
+    const modToDelete = {modToDelete: e.target.id}
+
+    axios.delete(`/${this.state.subData._id}/deletemod`, { data: modToDelete })
+      .then( (response) => {
+        let modDivs = [];
+
+        for (let i = 0; i<response.data.mods.length; i++) {
+          const modDiv = (
+            <div key={response.data.mods[i]}>
+              <p>{response.data.mods[i]}</p>
+              <button onClick={this.deleteMod} id={response.data.mods[i]}>Delete mod</button>
+            </div>
+          )
+          modDivs.push(modDiv)
+        }
+
+        this.setState( () => ({modDivs, modalMessage: 'Mod successfully deleted'}))
       })
       .catch( (error) => {
         let modalMessage;
