@@ -24,12 +24,25 @@ class CreateSubtidder extends React.Component {
     }
   }
   onRestrictSelect = (e) => {
-    const ageRestricted = e.target.value;
+    let ageRestricted = e.target.value;
+
+    if (ageRestricted.indexOf('yes') > -1) {
+      ageRestricted = true
+    } else {
+      ageRestricted = false
+    }
 
     this.setState( () => ({ageRestricted}))
   }
   onPrivateSelect = (e) => {
-    const isPrivate = e.target.value;
+    let isPrivate = e.target.value;
+
+    if (isPrivate.indexOf('yes') > -1) {
+      isPrivate = true
+    } else {
+      isPrivate = false
+    }
+
 
     this.setState( () => ({isPrivate}))
   }
@@ -112,25 +125,23 @@ class CreateSubtidder extends React.Component {
           />
           <div>
             <label>Age restricted?</label>
-            <div>
-              <input type='radio' value={true} onClick={this.onRestrictSelect} />
+            <form>
+              <input type='radio' value='yes' onClick={this.onRestrictSelect} />
               <label>Yes</label>
-            </div>
-            <div>
-              <input type='radio' value={false} onClick={this.onRestrictSelect} />
+              <br></br>
+              <input type='radio' value='no' onClick={this.onRestrictSelect} />
               <label>No</label>
-            </div>
+            </form>
           </div>
           <div>
             <label>Private subreddit?</label>
-            <div>
-              <input type='radio' value={true} onClick={this.onPrivateSelect} />
+            <form>
+              <input type='radio' value='yes' name='privateCheck' onClick={this.onPrivateSelect} />
               <label>Yes</label>
-            </div>
-            <div>
-              <input type='radio' value={false} onClick={this.onPrivateSelect} />
+              <br></br>
+              <input type='radio' value='no' name='privateCheck' onClick={this.onPrivateSelect} />
               <label>No</label>
-            </div>
+            </form>
           </div>
           <div>
             <label>Types of posts permitted</label>

@@ -13,6 +13,7 @@ const SubSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  blockedUsers: {},
   mods: [],
   ageRestricted: Boolean,
   permittedPosts: Object,

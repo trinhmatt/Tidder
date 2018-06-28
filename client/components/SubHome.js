@@ -45,7 +45,8 @@ class SubHome extends React.Component {
             )
             allPosts.push(post)
           }
-
+          //I can probably do all these checks on the backend
+          //TO DO: move all this to serverside
           if (subData.isSubbed) {
             isSubbed = true;
           }
@@ -55,8 +56,11 @@ class SubHome extends React.Component {
           }
 
           if (subData.sub.admin === this.props.auth.id) {
-            showPass = true
-            isAdmin = true
+            isAdmin = true;
+          }
+
+          if (isAdmin && subData.sub.isPrivate) {
+            showPass = true;
           }
 
           // Generate create links needs to be called after subData is set
@@ -174,7 +178,7 @@ class SubHome extends React.Component {
       })
   }
   deleteMod = (e) => {
-    const modToDelete = {modToDelete: e.target.id}
+    const modToDelete = { modToDelete: e.target.id };
 
     axios.delete(`/${this.state.subData._id}/deletemod`, { data: modToDelete })
       .then( (response) => {
@@ -203,6 +207,14 @@ class SubHome extends React.Component {
 
         this.setState( () => ({modalMessage}))
       })
+  }
+  onBlockUserChange = (e) => {
+    const blockedUser = e.target.value;
+
+    this.setState( () => ({blockedUser}))
+  }
+  blockUser = () => {
+    axios.post(``)
   }
   render() {
     return (
@@ -251,6 +263,16 @@ class SubHome extends React.Component {
                   placeholder='username'
                 />
                 <button onClick={this.addMod}>Add mod</button>
+              </div>
+              <div>
+                <h3>Block a user</h3>
+                <input
+                  type='text'
+                  value={this.state.blockedUser}
+                  onChange={this.onBlockUserChange}
+                  placeholder='username'
+                />
+                <button onClick={this.blockUser}>Block user</button>
               </div>
             </Modal>
           </div>
