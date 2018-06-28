@@ -13,13 +13,13 @@ const SubSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  blockedUsers: {},
+  blockedUsers: mongoose.Schema.Types.Mixed,
   mods: [],
   ageRestricted: Boolean,
   permittedPosts: Object,
   isDefault: Boolean,
   isPrivate: Boolean,
   subKey: String
-})
+}, {minimize: false})
 
 module.exports = mongoose.model('Sub', SubSchema);

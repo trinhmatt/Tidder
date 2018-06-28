@@ -77,7 +77,8 @@ class CreateSubtidder extends React.Component {
       ageRestricted: this.state.ageRestricted,
       admin: this.props.auth.id,
       permittedPosts: this.state.permittedPosts,
-      isPrivate: this.state.isPrivate
+      isPrivate: this.state.isPrivate,
+      blockedUsers: {}
     }
 
     if (this.state.isPrivate) {

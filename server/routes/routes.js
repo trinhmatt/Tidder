@@ -532,6 +532,26 @@ router.delete('/:subID/deletemod', (req, res) => {
   })
 })
 
+router.post('/:subID/blockuser', (req, res) => {
+  User.find({username: req.body.blockedUser}, (err, foundUser) => {
+    if (foundUser.length === 0 || err) {
+      res.status(404).send({message: 'User not found'})
+    } else {
+
+      Sub.findById(req.params.subID, (err, foundSub) => {
+        if (!foundSub._id || err) {
+          res.status(404).send({message: 'Sub not found'})
+        } else {
+          foundSub.blockedUsers[foundUser[0]._id] = true
+          foundSub.markModified('blockedUsers')
+          foundSub.save()
+          res.send(foundSub)
+        }
+      })
+    }
+  })
+})
+
 //Login
 //Cannot use redirect here, all routes are handled on the client
 router.post('/login', passport.authenticate('local'), (req, res) => {

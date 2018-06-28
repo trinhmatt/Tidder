@@ -88,18 +88,26 @@ class SubHome extends React.Component {
   generateCreateLinks = () => {
     let typeLinks = [];
 
-    for (let type in this.state.subData.permittedPosts) {
-      if (this.state.subData.permittedPosts[type]) {
-        const typeLink = (
-          <Link
-            key={type}
-            to={{
-              pathname: `/t/${this.props.match.params.sub}/create`,
-              state: { type, subId: this.state.subData._id }
-            }}>Create {type} post
-          </Link>
-        )
-        typeLinks.push(typeLink)
+    if (this.state.subData.blockedUsers[this.props.auth.id]) {
+      typeLinks = (
+        <div>
+          <p>You are banned from this community, which prevents you from creating posts or comments.</p>
+        </div>
+      )
+    } else {
+      for (let type in this.state.subData.permittedPosts) {
+        if (this.state.subData.permittedPosts[type]) {
+          const typeLink = (
+            <Link
+              key={type}
+              to={{
+                pathname: `/t/${this.props.match.params.sub}/create`,
+                state: { type, subId: this.state.subData._id }
+              }}>Create {type} post
+            </Link>
+          )
+          typeLinks.push(typeLink)
+        }
       }
     }
 
@@ -214,7 +222,11 @@ class SubHome extends React.Component {
     this.setState( () => ({blockedUser}))
   }
   blockUser = () => {
-    axios.post(``)
+    const blockedUser = {blockedUser: this.state.blockedUser}
+
+    axios.post(`/${this.state.subData._id}/blockuser`, blockedUser)
+      .then( (response) => console.log(response.data))
+      .catch( (error) => console.log(error))
   }
   render() {
     return (
