@@ -256,11 +256,19 @@ router.delete('/t/:sub/:postID/comment/delete', (req, res) => {
 //Send post information to the client if a user trys to go to the post page without using react-Router
   //I.e. if they enter the post url into the browser and directly access the post page
 router.post('/t/:sub/:postID', (req, res) => {
-  Post.findOne({_id: req.params.postID}).populate('comments').exec( (err, post) => {
+  Sub.findOne({name: req.params.sub}, (err, foundSub) => {
     if (err) {
-      res.send('Oops! Something happened, please try again or check the URL')
+      res.status(404).send({message: 'Error occured', error: err})
     } else {
-      res.send(post)
+      Post.findOne({_id: req.params.postID}).populate('comments').exec( (err, post) => {
+        if (err) {
+          res.send('Oops! Something happened, please try again or check the URL')
+        } else {
+          const response = {post, blockedUsers: foundSub.blockedUsers};
+          
+          res.send(response)
+        }
+      })
     }
   })
 })

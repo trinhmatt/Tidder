@@ -40,9 +40,17 @@ class SubHome extends React.Component {
 
           //Set up posts for render
           for (let i = 0; i<subData.sub.posts.length; i++) {
-            const post = (
-              <PostDiv key={i} postData={subData.sub.posts[i]} match={this.props.match}/>
-            )
+            let post;
+
+            if (subData.sub.blockedUsers[this.props.auth.id]) {
+              post = (
+                <PostDiv key={i} postData={subData.sub.posts[i]} isBlocked={true} match={this.props.match}/>
+              )
+            } else {
+              post = (
+                <PostDiv key={i} postData={subData.sub.posts[i]} isBlocked={false} match={this.props.match}/>
+              )
+            }
             allPosts.push(post)
           }
           //I can probably do all these checks on the backend

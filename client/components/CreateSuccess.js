@@ -7,7 +7,7 @@ class CreateSuccess extends React.Component {
 
     this.state = {
       type: '',
-      subKey: this.props.location.state.subKey
+      subKey: (this.props.location.state && this.props.location.state.subKey)
     }
   }
   componentDidMount() {

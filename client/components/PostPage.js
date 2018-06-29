@@ -15,7 +15,8 @@ class PostPage extends React.Component {
       isAuthor: false,
       isModalOpen: false,
       typeOfModal: null,
-      commentID: null
+      commentID: null,
+      blockedUsers: {}
     }
   }
   componentDidMount() {
@@ -27,10 +28,11 @@ class PostPage extends React.Component {
 
     axios.post(`${this.props.location.pathname}`)
       .then( (response) => {
-        for (let i = 0; i<response.data.comments.length; i++) {
+        console.log(response.data)
+        for (let i = 0; i<response.data.post.comments.length; i++) {
 
           //Compare the submission date with the current date
-          const postMoment = moment(response.data.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
+          const postMoment = moment(response.data.post.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
           const currentMoment = moment();
 
           const displayDifference = postMoment.from(currentMoment)
@@ -40,27 +42,32 @@ class PostPage extends React.Component {
               <div>
                 <button id='up-comment' onClick={this.commentVote}>Upvote</button>
                 <button id='down-comment' onClick={this.commentVote}>Downvote</button>
-                { (response.data.comments[i].author === this.props.auth.username) ? (
-                  <div id={response.data.comments[i]._id}>
+                { (response.data.post.comments[i].author === this.props.auth.username) ? (
+                  <div id={response.data.post.comments[i]._id}>
                     <button onClick={this.openModal}>Delete</button>
                     <button onClick={this.editComment}>Edit</button>
                   </div>
                 ) : '' }
               </div>
-              <p>{response.data.comments[i].body}</p>
-              <p>Submitted by {response.data.comments[i].author} {displayDifference}</p>
+              <p>{response.data.post.comments[i].body}</p>
+              <p>Submitted by {response.data.post.comments[i].author} {displayDifference}</p>
             </div>
           )
           allComments.push(commentDiv)
         }
 
-        if (response.data.author === this.props.auth.username) {
+        if (response.data.post.author === this.props.auth.username) {
           isAuthor = true;
         }
 
-        this.setState( () => ({postData: response.data, allComments, isAuthor}))
+        this.setState( () => ({
+          postData: response.data.post,
+          allComments,
+          isAuthor,
+          blockedUsers: response.data.blockedUsers
+        }))
       })
-      .catch( (error) => console.log(error))
+      .catch( (error) => console.log(error.response))
 
   }
   onCommentChange = (e) => {
@@ -229,13 +236,19 @@ class PostPage extends React.Component {
         {this.props.auth.id ? (
           <div>
             <h4>Create a comment</h4>
+            {(this.state.blockedUsers[this.props.auth.id]) &&
+              <div>
+                <p>You are currently banned from this community which prevents you from creating comments.</p>
+              </div>
+            }
             <form onSubmit={this.createComment}>
               <input
                 type='text'
                 value={this.state.comment}
                 onChange={this.onCommentChange}
+                disabled={(this.state.blockedUsers[this.props.auth.id])}
               />
-              <button>Create comment</button>
+              <button disabled={(this.state.blockedUsers[this.props.auth.id])}>Create comment</button>
             </form>
           </div>
         ) : ''}
