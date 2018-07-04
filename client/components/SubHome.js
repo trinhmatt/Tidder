@@ -19,7 +19,8 @@ class SubHome extends React.Component {
       allPosts: [],
       isSubbed: false,
       blockAccess: false,
-      modalMessage: ''
+      modalMessage: '',
+      allBannedUsers: []
     }
   }
   componentDidMount() {
@@ -233,7 +234,28 @@ class SubHome extends React.Component {
     const blockedUser = {blockedUser: this.state.blockedUser}
 
     axios.post(`/${this.state.subData._id}/blockuser`, blockedUser)
-      .then( (response) => console.log(response.data))
+      .then( (response) => {
+        if (response.data) {
+          this.setState( () => ({blockedMessage: 'User successfully banned'}))
+        }
+      })
+      .catch( (error) => this.setState( () => ({blockedMessage:
+        'User was not found. Please check your internet connection and/or your spelling'})
+      ))
+  }
+  showAllBanned = () => {
+    axios.get(`/${this.state.subData._id}/allbanned`)
+      .then( (response) => {
+        if (response.data.length > 0) {
+          let allBannedUsers = [];
+
+          for (let i = 0; i<response.data.length; i++) {
+            allBannedUsers.push(<li>{response.data[i]}</li>)
+          }
+
+          this.setState( () => ({allBannedUsers}))
+        }
+      })
       .catch( (error) => console.log(error))
   }
   render() {
@@ -286,6 +308,13 @@ class SubHome extends React.Component {
               </div>
               <div>
                 <h3>Block a user</h3>
+                {this.state.blockedMessage}
+                <button onClick={this.showAllBanned}>Show banned users</button>
+                <div>
+                  <ul>
+                    {this.state.allBannedUsers}
+                  </ul>
+                </div>
                 <input
                   type='text'
                   value={this.state.blockedUser}

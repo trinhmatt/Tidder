@@ -265,7 +265,7 @@ router.post('/t/:sub/:postID', (req, res) => {
           res.send('Oops! Something happened, please try again or check the URL')
         } else {
           const response = {post, blockedUsers: foundSub.blockedUsers};
-          
+
           res.send(response)
         }
       })
@@ -428,15 +428,6 @@ router.post('/subscribe/:id', (req, res) => {
 })
 
 
-router.get('*', (req, res) => {
-  //So that index can always find bundle.js in dev or prod
-  //Required to get nested paths working (i.e. url/t/path)
-  //Required in every route that renders index
-  const absolutePath = req.protocol + '://' + req.get('host');
-  res.render('index', {absolutePath});
-});
-
-
 //Create user
 router.post('/register', (req, res) => {
   const absolutePath = req.protocol + '://' + req.get('host');
@@ -560,6 +551,34 @@ router.post('/:subID/blockuser', (req, res) => {
   })
 })
 
+router.get('/:subID/allbanned', (req, res) => {
+  Sub.findById(req.params.subID, (err, foundSub) => {
+    if (!foundSub._id || err) {
+      res.status(404).send({message: 'The sub was not found, please try again'})
+    } else {
+
+      let blockedUserNames = [];
+      //Since the user search is asynchronous, I need to add a counter so that
+        //the server doesnt send an empty array when the for loop technically finishes
+      let keyCounter = 0;
+
+      for (let i in foundSub.blockedUsers) {
+        User.findById(i, (err, foundUser) => {
+          if (foundUser._id && !err) {
+            blockedUserNames.push(foundUser.username)
+          }
+          
+          keyCounter += 1
+
+          if (keyCounter === Object.keys(foundSub.blockedUsers).length) {
+            res.send(blockedUserNames)
+          }
+        })
+      }
+    }
+  })
+})
+
 //Login
 //Cannot use redirect here, all routes are handled on the client
 router.post('/login', passport.authenticate('local'), (req, res) => {
@@ -576,6 +595,15 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     }
   })
 });
+
+router.get('*', (req, res) => {
+  //So that index can always find bundle.js in dev or prod
+  //Required to get nested paths working (i.e. url/t/path)
+  //Required in every route that renders index
+  const absolutePath = req.protocol + '://' + req.get('host');
+  res.render('index', {absolutePath});
+});
+
 
 
 module.exports = router;
