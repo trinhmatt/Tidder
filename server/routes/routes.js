@@ -551,6 +551,26 @@ router.post('/:subID/blockuser', (req, res) => {
   })
 })
 
+router.post('/:subID/unblockuser', (req, res) => {
+  User.find({username: req.body.unblockedUser}, (err, foundUser) => {
+    if (foundUser.length === 0 || err) {
+      res.status(404).send({message: 'User not found'})
+    } else {
+
+      Sub.findById(req.params.subID, (err, foundSub) => {
+        if (!foundSub._id || err) {
+          res.status(404).send({message: 'Sub not found'})
+        } else {
+          delete foundSub.blockedUsers[foundUser[0]._id] 
+          foundSub.markModified('blockedUsers')
+          foundSub.save()
+          res.send(foundSub)
+        }
+      })
+    }
+  })
+})
+
 router.get('/:subID/allbanned', (req, res) => {
   Sub.findById(req.params.subID, (err, foundSub) => {
     if (!foundSub._id || err) {
@@ -563,17 +583,19 @@ router.get('/:subID/allbanned', (req, res) => {
       let keyCounter = 0;
 
       for (let i in foundSub.blockedUsers) {
-        User.findById(i, (err, foundUser) => {
-          if (foundUser._id && !err) {
-            blockedUserNames.push(foundUser.username)
-          }
-          
-          keyCounter += 1
+        if (foundSub.blockedUsers[i]) {
+          User.findById(i, (err, foundUser) => {
+            if (foundUser._id && !err) {
+              blockedUserNames.push(foundUser.username)
+            }
 
-          if (keyCounter === Object.keys(foundSub.blockedUsers).length) {
-            res.send(blockedUserNames)
-          }
-        })
+            keyCounter += 1
+
+            if (keyCounter === Object.keys(foundSub.blockedUsers).length) {
+              res.send(blockedUserNames)
+            }
+          })
+        }
       }
     }
   })

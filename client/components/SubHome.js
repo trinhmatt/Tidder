@@ -230,6 +230,11 @@ class SubHome extends React.Component {
 
     this.setState( () => ({blockedUser}))
   }
+  onUnblockUserChange = (e) => {
+    const unblockedUser = e.target.value;
+
+    this.setState( () => ({unblockedUser}))
+  }
   blockUser = () => {
     const blockedUser = {blockedUser: this.state.blockedUser}
 
@@ -242,6 +247,20 @@ class SubHome extends React.Component {
       .catch( (error) => this.setState( () => ({blockedMessage:
         'User was not found. Please check your internet connection and/or your spelling'})
       ))
+  }
+  unblockUser = () => {
+    const unblockedUser = {unblockedUser: this.state.unblockedUser}
+
+    axios.post(`/${this.state.subData._id}/unblockuser`, unblockedUser)
+      .then( (response) => {
+        if (response.data) {
+          this.setState( () => ({blockedMessage: 'User successfully unbanned'}))
+        }
+      })
+      .catch( (error) => console.log(error.response))
+      // this.setState( () => ({blockedMessage:
+      //   'User was not found. Please check your internet connection and/or your spelling'})
+      // )
   }
   showAllBanned = () => {
     axios.get(`/${this.state.subData._id}/allbanned`)
@@ -315,13 +334,24 @@ class SubHome extends React.Component {
                     {this.state.allBannedUsers}
                   </ul>
                 </div>
-                <input
-                  type='text'
-                  value={this.state.blockedUser}
-                  onChange={this.onBlockUserChange}
-                  placeholder='username'
-                />
-                <button onClick={this.blockUser}>Block user</button>
+                <div>
+                  <input
+                    type='text'
+                    value={this.state.blockedUser}
+                    onChange={this.onBlockUserChange}
+                    placeholder='username'
+                  />
+                  <button onClick={this.blockUser}>Block user</button>
+                </div>
+                <div>
+                  <input
+                    type='text'
+                    value={this.state.unblockedUser}
+                    onChange={this.onUnblockUserChange}
+                    placeholder='username'
+                  />
+                  <button onClick={this.unblockUser}>Unblock User</button>
+                </div>
               </div>
             </Modal>
           </div>
