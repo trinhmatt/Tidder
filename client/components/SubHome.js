@@ -136,8 +136,6 @@ class SubHome extends React.Component {
     const subPass = e.target.value;
 
     this.setState( () => ({subPass}))
-
-
   }
   onPassSubmit = (e) => {
     e.preventDefault();
@@ -259,9 +257,7 @@ class SubHome extends React.Component {
           this.setState( () => ({blockedMessage: 'User successfully banned'}))
         }
       })
-      .catch( (error) => this.setState( () => ({blockedMessage:
-        'User was not found. Please check your internet connection and/or your spelling'})
-      ))
+      .catch( (error) => this.setState( () => ({blockedMessage: error.response.data})))
   }
   unblockUser = () => {
     const unblockedUser = {unblockedUser: this.state.unblockedUser}

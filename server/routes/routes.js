@@ -534,17 +534,32 @@ router.delete('/:subID/deletemod', (req, res) => {
 router.post('/:subID/blockuser', (req, res) => {
   User.find({username: req.body.blockedUser}, (err, foundUser) => {
     if (foundUser.length === 0 || err) {
-      res.status(404).send({message: 'User not found'})
+      res.status(404).send('User not found')
     } else {
 
       Sub.findById(req.params.subID, (err, foundSub) => {
         if (!foundSub._id || err) {
-          res.status(404).send({message: 'Sub not found'})
+          res.status(404).send('Sub not found')
         } else {
-          foundSub.blockedUsers[foundUser[0]._id] = true
-          foundSub.markModified('blockedUsers')
-          foundSub.save()
-          res.send(foundSub)
+          let isUserMod = false;
+
+          for (let i = 0; i<foundSub.mods.length; i++) {
+            if (foundSub.mods[i] === foundUser[0].username) {
+              isUserMod = true;
+              break;
+            }
+          }
+
+          if (isUserMod) {
+            res.status(500).send(
+              'Mods cannot be banned, please remove the user as a mod before attempting to ban them again'
+            )
+          } else {
+            foundSub.blockedUsers[foundUser[0]._id] = true
+            foundSub.markModified('blockedUsers')
+            foundSub.save()
+            res.send(foundSub)
+          }
         }
       })
     }
@@ -561,7 +576,7 @@ router.post('/:subID/unblockuser', (req, res) => {
         if (!foundSub._id || err) {
           res.status(404).send({message: 'Sub not found'})
         } else {
-          delete foundSub.blockedUsers[foundUser[0]._id] 
+          delete foundSub.blockedUsers[foundUser[0]._id]
           foundSub.markModified('blockedUsers')
           foundSub.save()
           res.send(foundSub)
