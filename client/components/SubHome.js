@@ -31,6 +31,7 @@ class SubHome extends React.Component {
         let blockAccess = false;
         let showPass = false;
         let isAdmin = false;
+        let isMod = false;
 
         if (!subData.sub._id) {
           this.props.history.push('/404')
@@ -60,6 +61,14 @@ class SubHome extends React.Component {
             isSubbed = true;
           }
 
+          for (let n = 0; n<subData.sub.mods.length; n++) {
+            if (subData.sub.mods[n] === this.props.auth.username) {
+              isSubbed = true;
+              isMod = true;
+              break;
+            }
+          }
+
           if (subData.sub.isPrivate && !isSubbed) {
             blockAccess = true;
           }
@@ -79,7 +88,8 @@ class SubHome extends React.Component {
             isSubbed,
             blockAccess,
             showPass,
-            isAdmin
+            isAdmin,
+            isMod
           }), this.generateCreateLinks)
         }
       })
@@ -152,7 +162,12 @@ class SubHome extends React.Component {
       )
       modDivs.push(modDiv)
     }
-    this.setState( () => ({openAdminControls: true, modDivs}))
+    //Need modalModMode so that mods cannot add or remove mods
+    //Didn't want to make two modals for admin and mod controls
+    this.setState( () => ({openAdminControls: true, modalModMode: false, modDivs}))
+  }
+  openMod = () => {
+    this.setState( () => ({openAdminControls: true, modalModMode: true}))
   }
   closeAdminControls = () => {
     this.setState( () => ({openAdminControls: false}))
@@ -267,12 +282,17 @@ class SubHome extends React.Component {
       .then( (response) => {
         if (response.data.length > 0) {
           let allBannedUsers = [];
+          let blockedMessage = '';
 
           for (let i = 0; i<response.data.length; i++) {
             allBannedUsers.push(<li>{response.data[i]}</li>)
           }
 
-          this.setState( () => ({allBannedUsers}))
+          if (allBannedUsers.length === 0) {
+            blockedMessage = 'There are no blocked users.'
+          }
+
+          this.setState( () => ({allBannedUsers, blockedMessage}))
         }
       })
       .catch( (error) => console.log(error))
@@ -302,6 +322,12 @@ class SubHome extends React.Component {
                 <button onClick={this.openAdmin}>Admin controls</button>
               </div>
             }
+            {
+              this.state.isMod &&
+              <div>
+                <button onClick={this.openMod}>Mod controls</button>
+              </div>
+            }
             {this.state.message}
             {(this.props.auth.id && !this.state.isSubbed) ? <button onClick={this.subscribeToSub}>Subscribe</button> : ''}
             {this.state.typeLinks}
@@ -312,19 +338,22 @@ class SubHome extends React.Component {
               contentLabel="Admin Controls"
             >
               <h1>Admin controls</h1>
-              <div>
-                <h3>Moderators</h3>
-                <p>{this.state.modalMessage}</p>
-                {this.state.modDivs}
-                <p>Add a moderator</p>
-                <input
-                  type='text'
-                  value={this.state.newMod}
-                  onChange={this.onNewModChange}
-                  placeholder='username'
-                />
-                <button onClick={this.addMod}>Add mod</button>
-              </div>
+              {
+                !this.state.modalModMode &&
+                <div>
+                  <h3>Moderators</h3>
+                  <p>{this.state.modalMessage}</p>
+                  {this.state.modDivs}
+                  <p>Add a moderator</p>
+                  <input
+                    type='text'
+                    value={this.state.newMod}
+                    onChange={this.onNewModChange}
+                    placeholder='username'
+                  />
+                  <button onClick={this.addMod}>Add mod</button>
+                </div>
+              }
               <div>
                 <h3>Block a user</h3>
                 {this.state.blockedMessage}
