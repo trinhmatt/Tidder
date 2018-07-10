@@ -22,13 +22,14 @@ class PostPage extends React.Component {
   componentDidMount() {
     let allComments = [];
     let isAuthor = false;
+    let isAdmin = false;
+    let isMod = false;
 
     //If the user trys to access the page without going through the react router
     //I.e. directly entering the URL in the browser
 
     axios.post(`${this.props.location.pathname}`)
       .then( (response) => {
-        console.log(response.data)
         for (let i = 0; i<response.data.post.comments.length; i++) {
 
           //Compare the submission date with the current date
@@ -60,10 +61,22 @@ class PostPage extends React.Component {
           isAuthor = true;
         }
 
+        if (response.data.admin === this.props.auth.id) {
+          isAdmin = true;
+        }
+
+        for (let n = 0; n<response.data.mods.length; n++) {
+          if (response.data.mods[n] === this.props.auth.username) {
+            isMod = true;
+          }
+        }
+
         this.setState( () => ({
           postData: response.data.post,
           allComments,
           isAuthor,
+          isMod,
+          isAdmin,
           blockedUsers: response.data.blockedUsers
         }))
       })
@@ -178,6 +191,8 @@ class PostPage extends React.Component {
       .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
   }
   deleteComment = (e) => {
+    //Need to add a way for admins/mods to send the user a message about why their post was deleted
+      //Needs to be done after messaging is done 
     const commentID = this.state.commentID
 
     axios.delete(`${this.props.location.pathname}/comment/delete`, { data: { id: commentID } })
@@ -220,8 +235,11 @@ class PostPage extends React.Component {
         <h1>
           {this.props.location.state ? this.props.location.state.title : this.state.postData.title}
         </h1>
-        {this.state.isAuthor ? <button id='post-delete' onClick={this.openModal}>Delete post</button> : ''}
-        {this.state.isAuthor ? <button onClick={this.editPost}>Edit post</button> : ''}
+        {
+          (this.state.isAuthor || this.state.isAdmin || this.state.isMod) &&
+          <button id='post-delete' onClick={this.openModal}>Delete post</button>
+        }
+        {this.state.isAuthor && <button onClick={this.editPost}>Edit post</button>}
         <p>
           {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
         </p>

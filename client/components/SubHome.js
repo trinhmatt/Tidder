@@ -40,21 +40,6 @@ class SubHome extends React.Component {
 
           subData.sub.posts.sort( (a, b) => (b.votes.up - b.votes.down) - (a.votes.up - a.votes.down));;
 
-          //Set up posts for render
-          for (let i = 0; i<subData.sub.posts.length; i++) {
-            let post;
-
-            if (subData.sub.blockedUsers[this.props.auth.id]) {
-              post = (
-                <PostDiv key={i} postData={subData.sub.posts[i]} isBlocked={true} match={this.props.match}/>
-              )
-            } else {
-              post = (
-                <PostDiv key={i} postData={subData.sub.posts[i]} isBlocked={false} match={this.props.match}/>
-              )
-            }
-            allPosts.push(post)
-          }
           //I can probably do all these checks on the backend
           //TO DO: move all this to serverside
           if (subData.isSubbed) {
@@ -79,6 +64,33 @@ class SubHome extends React.Component {
 
           if (isAdmin && subData.sub.isPrivate) {
             showPass = true;
+          }
+
+          //Set up posts for render
+          for (let i = 0; i<subData.sub.posts.length; i++) {
+            let post;
+            let isBlocked;
+
+            if (subData.sub.blockedUsers[this.props.auth.id]) {
+              post = (
+                <PostDiv
+                  key={i}
+                  postData={subData.sub.posts[i]}
+                  isBlocked={true}
+                  match={this.props.match}
+                />
+              )
+            } else {
+              post = (
+                <PostDiv
+                  key={i}
+                  postData={subData.sub.posts[i]}
+                  isBlocked={false}
+                  match={this.props.match}
+                />
+              )
+            }
+            allPosts.push(post)
           }
 
           // Generate create links needs to be called after subData is set

@@ -264,7 +264,12 @@ router.post('/t/:sub/:postID', (req, res) => {
         if (err) {
           res.send('Oops! Something happened, please try again or check the URL')
         } else {
-          const response = {post, blockedUsers: foundSub.blockedUsers};
+          const response = {
+            post,
+            blockedUsers: foundSub.blockedUsers,
+            admin: foundSub.admin.toString(),
+            mods: foundSub.mods
+          };
 
           res.send(response)
         }
