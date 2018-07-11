@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import axios from 'axios'
 import { history } from '../routes/AppRouter'
 
@@ -49,4 +48,4 @@ class HeaderSearch extends React.Component {
   }
 }
 
-export default connect(undefined)(HeaderSearch);
+export default HeaderSearch;
