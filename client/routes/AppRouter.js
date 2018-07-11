@@ -20,7 +20,9 @@ import EditPost from '../components/EditPost'
 import EditConfirmation from '../components/EditConfirmation'
 import Profile from '../components/Profile'
 import SavedPosts from '../components/SavedPosts'
+import SearchResults from '../components/SearchResults'
 
+//So I can access history from anywhere (actions or components)
 export const history = createHistory()
 
 export const AppRouter = () => (
@@ -30,6 +32,7 @@ export const AppRouter = () => (
         <PublicRoute path='/' component={Home} exact={true} />
         <PublicRoute path='/404' component={NotFound} exact={true} />
         <PublicRoute path='/t/:sub' component={SubHome} exact={true} />
+        <PublicRoute path='/searchresults' component={SearchResults} />
         <PrivateRoute path='/t/:sub/create' component={CreatePost} exact={true} />
         <PublicRoute path='/t/:sub/:id' component={PostPage} exact={true} />
         <PrivateRoute path='/t/:sub/:id/edit' component={EditPost} exact={true} />

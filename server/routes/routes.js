@@ -90,6 +90,28 @@ router.get('/defaultsubs', (req, res) => {
   })
 })
 
+//Search route
+router.post('/api/search', (req, res) => {
+  //search for any subs that have the query string as a substring
+  Sub.find({name: {$regex: req.body.searchQuery, $options: "i"} }).exec( (err, foundSubs) => {
+    if (err) {
+      res.status(500).send('An error occurred');
+    } else {
+      let queryResults = {subs: foundSubs};
+
+      Post.find({title: {$regex: req.body.searchQuery, $options: "i"} }).exec( (err, foundPosts) => {
+        if (err) {
+          res.status(500).send('An error occurred')
+        } else {
+          queryResults.posts = foundPosts;
+
+          res.send(queryResults);
+        }
+      })
+    }
+  })
+})
+
 //Create comment
 router.post('/api/t/:sub/:postID/comment', (req, res) => {
   let comment = req.body;

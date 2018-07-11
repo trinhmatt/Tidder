@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem } from 'react-bootstrap'
 import { startLogout } from '../../store/actions/auth'
+import HeaderSearch from './HeaderSearch'
 
 const Header = (props) => (
   <div>
@@ -12,6 +13,11 @@ const Header = (props) => (
           <a href="/">Tidder</a>
         </Navbar.Brand>
       </Navbar.Header>
+      <Nav>
+        <NavItem>
+          <HeaderSearch />
+        </NavItem>
+      </Nav>
       <Nav pullRight>
         {
           props.auth.id ?
