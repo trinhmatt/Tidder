@@ -41,7 +41,6 @@ class HeaderSearch extends React.Component {
             value={this.state.searchValue}
             onChange={this.onSearchChange}
           />
-          {/* <button>Sub</button> */}
         </form>
       </div>
     )

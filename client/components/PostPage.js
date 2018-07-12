@@ -138,7 +138,8 @@ class PostPage extends React.Component {
           this.setState( () => ({message: 'Vote succesful'}))
         }
       })
-      .catch( () => {
+      .catch( (error) => {
+        console.log(error.response)
         this.setState( () => ({message: 'Something went wrong'}))
       })
   }
@@ -192,7 +193,7 @@ class PostPage extends React.Component {
   }
   deleteComment = (e) => {
     //Need to add a way for admins/mods to send the user a message about why their post was deleted
-      //Needs to be done after messaging is done 
+      //Needs to be done after messaging is done
     const commentID = this.state.commentID
 
     axios.delete(`${this.props.location.pathname}/comment/delete`, { data: { id: commentID } })
@@ -254,11 +255,11 @@ class PostPage extends React.Component {
         {this.props.auth.id ? (
           <div>
             <h4>Create a comment</h4>
-            {(this.state.blockedUsers[this.props.auth.id]) &&
+            {/* {(this.state.blockedUsers[this.props.auth.id]) &&
               <div>
                 <p>You are currently banned from this community which prevents you from creating comments.</p>
               </div>
-            }
+            } */}
             <form onSubmit={this.createComment}>
               <input
                 type='text'

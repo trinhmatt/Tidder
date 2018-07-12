@@ -34,8 +34,9 @@ class SearchResults extends React.Component {
       for (let n = 0; n<results.posts.length; n++) {
         //Have to do this due to the way I set up PostDiv
         //Need to fix this, there is a better way
-        const dummyMatch = {params: {sub: results.posts[n].subName} }
-        const postDiv = <PostDiv key={n} match={dummyMatch} postData={results.posts[n]} />
+        const dummyMatch = {params: {sub: results.posts[n].subName} };
+
+        const postDiv = <PostDiv key={n} match={dummyMatch} postData={results.posts[n]} />;
 
         resultsToRender.posts.push(postDiv)
       }

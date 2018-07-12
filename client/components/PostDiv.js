@@ -10,7 +10,7 @@ class PostDiv extends React.Component {
 
     this.state = {
       message: '',
-      pathname: `/t/${this.props.match.params.sub}/${this.props.postData._id}`,
+      pathname: `/t/${this.props.postData.subName}/${this.props.postData._id}`,
       saved: 'Save'
     }
   }
@@ -110,11 +110,21 @@ class PostDiv extends React.Component {
         </div>
         <p>Votes: {this.state.votes}</p>
         {/* Cannot use Link for some reason, it cuts off the pathname if conditionally rendered */}
-        <a href={this.state.pathname}>{this.props.postData.title}</a>
+        {/* <a href={this.state.pathname}></a> */}
+        <Link
+          to={{
+            pathname: this.state.pathname,
+            state: {
+              title: this.props.postData.title,
+              body: this.props.postData.body,
+              author: this.props.postData.author
+            }
+          }}>{this.props.postData.title}
+        </Link>
         <div>
           <Link
             to={{
-              pathname: `/t/${this.props.postData.subName}/${this.props.postData._id}`,
+              pathname: this.state.pathname,
               state: {
                 title: this.props.postData.title,
                 body: this.props.postData.body,
