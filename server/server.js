@@ -2,6 +2,7 @@ const express = require('express'),
       router = require('./routes/routes.js'),
       commentRoutes = require('./routes/comment.js'),
       subredditRoutes = require('./routes/subreddit.js'),
+      postRoutes = require('./routes/post.js'),
       path = require('path'),
       bodyParser = require('body-parser'),
       mongoose = require('mongoose'),
@@ -46,6 +47,7 @@ app.use( (req, res, next) => {
 app.use('/', router);
 app.use(subredditRoutes);
 app.use(commentRoutes);
+app.use(postRoutes);
 
 
 module.exports = app;

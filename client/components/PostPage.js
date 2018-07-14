@@ -242,7 +242,7 @@ class PostPage extends React.Component {
         }
         {this.state.isAuthor && <button onClick={this.editPost}>Edit post</button>}
         <p>
-          {this.props.location.state ? this.props.location.state.body : this.state.postData.body}
+          {this.state.postData.body}
         </p>
         {this.props.auth.id ? (
           <div>
