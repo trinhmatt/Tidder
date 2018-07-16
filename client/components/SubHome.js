@@ -280,10 +280,10 @@ class SubHome extends React.Component {
           this.setState( () => ({blockedMessage: 'User successfully unbanned'}))
         }
       })
-      .catch( (error) => console.log(error.response))
-      // this.setState( () => ({blockedMessage:
-      //   'User was not found. Please check your internet connection and/or your spelling'})
-      // )
+      .catch( (error) => this.setState( () => ({
+          blockedMessage: 'User was not found. Please check your internet connection and/or your spelling'
+        })
+      ))
   }
   showAllBanned = () => {
     axios.get(`/${this.state.subData._id}/allbanned`)

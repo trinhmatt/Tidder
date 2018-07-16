@@ -109,8 +109,6 @@ class PostDiv extends React.Component {
           <button onClick={this.onVoteClick}>Downvote</button>
         </div>
         <p>Votes: {this.state.votes}</p>
-        {/* Cannot use Link for some reason, it cuts off the pathname if conditionally rendered */}
-        {/* <a href={this.state.pathname}></a> */}
         <Link
           to={{
             pathname: this.state.pathname,

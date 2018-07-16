@@ -13,7 +13,7 @@ class Home extends React.Component {
     }
   }
   componentDidMount() {
-    this.props.dispatch(getSubs())
+    this.props.dispatch(getSubs());
   }
   //Cannot set up posts to render on mount because the mounting occurs before state is mapped to props
   componentDidUpdate() {
@@ -49,7 +49,7 @@ class Home extends React.Component {
   render() {
     return (
       <div>
-        <h1>Test!!!</h1>
+        <h1>Tidder</h1>
         <Link to='/createsubtidder'>Create subtidder</Link>
         <div>
           {this.state.postsToRender}

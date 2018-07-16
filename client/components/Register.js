@@ -7,7 +7,8 @@ class Register extends React.Component {
 
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      error: ''
     }
   }
   onRegister = (e) => {
@@ -17,7 +18,7 @@ class Register extends React.Component {
 
     axios.post('/register', userInfo)
     .then( () => this.props.history.push('/registersuccess'))
-    .catch( (err) => console.log(err));
+    .catch( (err) => this.setState( () => ({error: 'Registration unsuccessful'})));
 
   }
   onUserChange = (e) => {
@@ -34,6 +35,7 @@ class Register extends React.Component {
     return (
       <div>
         <h1>Register</h1>
+        {this.state.error}
         <form onSubmit={this.onRegister}>
           <input type='text' placeholder='username' value={this.state.username} onChange={this.onUserChange} />
           <input type='password' placeholder='password' value={this.state.password} onChange={this.onPassChange} />
