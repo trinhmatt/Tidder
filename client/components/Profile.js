@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
+import Modal from 'react-modal'
 import PostDiv from './PostDiv'
 
 
@@ -13,7 +15,10 @@ class Profile extends React.Component {
       commentsToRender: [],
       postsToRender: [],
       dataFound: false,
-      savedLink: false
+      savedLink: false,
+      isModalOpen: false,
+      message: '',
+      messageStatus: ''
     }
   }
   componentDidMount() {
@@ -24,7 +29,12 @@ class Profile extends React.Component {
       if (response.data.message) {
         this.setState( () => ({error: 'Could not find user'}))
       } else {
-        this.setState( () => ({userData: response.data, dataFound: true, savedLink: true}))
+        this.setState( () => ({
+          userData: response.data,
+          dataFound: true,
+          //Only show saved link if username matches
+          savedLink: (response.data.user === this.props.auth.username)
+        }))
       }
     })
     .catch( (err) => {
@@ -59,10 +69,37 @@ class Profile extends React.Component {
       this.setState( () => ({commentsToRender, postsToRender, dataFound: false}))
     }
   }
+  openMessageConsole = () => {
+    this.setState( () => ({isModalOpen: true}));
+  }
+  onMessageChange = (e) => {
+    const message = e.target.value;
+
+    this.setState( () => ({message}));
+  }
+  sendMessage = (e) => {
+    e.preventDefault();
+
+    const message = {
+      message: this.state.message,
+      timestamp: moment().format("MMMM Do YYYY, h:mm:ss a")
+    };
+
+    axios.post(`/api/message/${this.props.auth.id}/${this.props.match.params.username}`, message)
+      .then( (response) => this.setState( () => ({messageStatus: 'Message sent!'})))
+      .catch( (err) => this.setState( () => ({messageStatus: 'An error occurred, please try again.'})))
+  }
+  closeModal = () => {
+    this.setState( () => ({isModalOpen: false}));
+  }
   render() {
     return (
       <div>
         {this.state.error ? <h1>{this.state.error}</h1> : <h1>{this.props.match.params.username}</h1>}
+        {this.props.auth.id &&
+          <div>
+            <button onClick={this.openMessageConsole}>Send a message</button>
+          </div>}
         {(this.props.auth.id && this.state.savedLink) && <Link to={{
           pathname: (this.props.location.pathname) + '/saved'
         }}>Saved posts</Link>}
@@ -74,6 +111,24 @@ class Profile extends React.Component {
           <h1>Posts</h1>
           {this.state.postsToRender}
         </div>
+        <Modal
+          isOpen={this.state.isModalOpen}
+          onRequestClose={this.closeModal}
+          contentLabel="Delete Confirmation"
+        >
+          <h1>Send a message</h1>
+          <p>{this.state.messageStatus}</p>
+          <form onSubmit={this.sendMessage}>
+            <textarea
+              value={this.state.message}
+              onChange={this.onMessageChange}
+            />
+            <button>Send</button>
+          </form>
+          <div>
+            <button onClick={this.closeModal}>Close message console</button>
+          </div>
+        </Modal>
       </div>
     )
   }

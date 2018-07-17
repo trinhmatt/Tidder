@@ -61,7 +61,7 @@ router.get('/:username/profiledata', (req, res) => {
       res.send(errObj)
     } else {
       Comment.find({author: req.params.username}).populate('post').exec( (err, foundComments) => {
-        let response = {};
+        let response = {user: req.params.username};
 
         if (err) {
           errObj.collection = 'Comment'
@@ -145,7 +145,41 @@ router.post('/register', (req, res) => {
       })
     }
   })
+})
 
+//Send message
+router.post('/api/message/:sender/:receiver', (req, res) => {
+  User.findOne({username: req.params.receiver}, (err, receiver) => {
+    if (err) {
+      res.status(500).send(err)
+    } else {
+      //Check if the users have communicated before, if they have edit the existing object
+        //else create one
+      if (receiver.messages[req.user.username]) {
+        receiver.messages[req.user.username].received.push(req.body)
+        receiver.markModified('messages')
+        receiver.save()
+
+        req.user.messages[req.params.receiver].sent.push(req.body)
+        req.user.markModified('messages')
+        req.user.save()
+
+        res.send('Message sent')
+      } else {
+        receiver.messages[req.user.username] = {received: [], sent: []};
+        receiver.messages[req.user.username].received.push(req.body)
+        receiver.markModified('messages')
+        receiver.save()
+
+        req.user.messages[req.params.receiver] = {received: [], sent: []};
+        req.user.messages[req.params.receiver].sent.push(req.body)
+        req.user.markModified('messages')
+        req.user.save()
+
+        res.send('Message sent')
+      }
+    }
+  })
 })
 
 

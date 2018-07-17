@@ -20,8 +20,9 @@ const UserSchema = new mongoose.Schema({
   savedPosts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'
-  }]
-})
+  }],
+  messages: mongoose.Schema.Types.Mixed
+}, {minimize: false} )
 
 UserSchema.plugin(passportLocalMongoose);
 
