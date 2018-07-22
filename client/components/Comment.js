@@ -1,12 +1,13 @@
 import React from 'react'
 import axios from 'axios'
+import Modal from 'react-modal'
 
 class Comment extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      comment: ''
+      isModalOpen: false
     }
   }
   openCommentReply = (e) => {
@@ -24,6 +25,26 @@ class Comment extends React.Component {
     e.preventDefault();
 
     console.log(e.target.value)
+  }
+  openModal = () => {
+    this.setState( () => ({isModalOpen: true}))
+  }
+  deleteComment = (e) => {
+    //Need to add a way for admins/mods to send the user a message about why their post was deleted
+      //Needs to be done after messaging is done
+    const commentID = this.props.commentData._id
+
+    axios.delete(`${this.props.location.pathname}/comment/delete`, { data: { id: commentID } })
+      .then( () => this.props.history.push('/deleteconfirm'))
+      .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
+  }
+  editComment = (e) => {
+    const data = this.props.commentData
+
+    this.props.history.push({
+      pathname: `${this.props.location.pathname}/editcomment`,
+      state: { data }
+    })
   }
   commentVote = (e) => {
     let vote;
@@ -82,6 +103,15 @@ class Comment extends React.Component {
             </form>
             <button onClick={this.openCommentReply}>Reply</button>
           </div>}
+        <Modal
+          isOpen={this.state.isModalOpen}
+          onRequestClose={this.closeModal}
+          contentLabel="Delete Confirmation"
+        >
+          <h2>Are you sure you want to delete this comment?</h2>
+          <button onClick={this.deleteComment}>Yes</button>
+          <button onClick={this.closeModal}>No</button>
+        </Modal>
       </div>
     )
   }

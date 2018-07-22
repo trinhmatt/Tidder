@@ -46,6 +46,7 @@ class PostPage extends React.Component {
               commentData={response.data.post.comments[i]}
               displayDifference={displayDifference}
               location={this.props.location}
+              history={this.props.history}
             />
           )
           allComments.push(commentDiv)
@@ -138,34 +139,14 @@ class PostPage extends React.Component {
         this.setState( () => ({message: 'Something went wrong'}))
       })
   }
-  openModal = (e) => {
-    let typeOfModal;
-    let commentID = null;
-
-    //Need to check type so I only need to use one Modal
-    if (e.target.id.indexOf('post') > -1) {
-      typeOfModal = 'post'
-    } else {
-      commentID = e.target.parentNode.id
-      typeOfModal = 'comment'
-    }
-
-    this.setState( () => ({isModalOpen: true, typeOfModal, commentID}))
+  openModal = () => {
+    this.setState( () => ({isModalOpen: true}))
   }
   closeModal = () => {
     this.setState( () => ({isModalOpen: false}))
   }
   deletePost = () => {
     axios.delete(`${this.props.location.pathname}/delete`, { data: { id: this.props.match.params.id }})
-      .then( () => this.props.history.push('/deleteconfirm'))
-      .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
-  }
-  deleteComment = (e) => {
-    //Need to add a way for admins/mods to send the user a message about why their post was deleted
-      //Needs to be done after messaging is done
-    const commentID = this.state.commentID
-
-    axios.delete(`${this.props.location.pathname}/comment/delete`, { data: { id: commentID } })
       .then( () => this.props.history.push('/deleteconfirm'))
       .catch( () => this.setState( () => ({message: 'An error occurred, please try again.'})))
   }
@@ -178,23 +159,6 @@ class PostPage extends React.Component {
 
     this.props.history.push({
       pathname: `${this.props.location.pathname}/edit`,
-      state: { data }
-    })
-  }
-  editComment = (e) => {
-    let data;
-
-    for (let i = 0; i<this.state.postData.comments.length; i++) {
-      //Comment ID is stored in parent div as the ID
-      if (this.state.postData.comments[i]._id === e.target.parentNode.id) {
-        data = this.state.postData.comments[i]
-        delete data.votes
-        break
-      }
-    }
-
-    this.props.history.push({
-      pathname: `${this.props.location.pathname}/editcomment`,
       state: { data }
     })
   }
@@ -245,8 +209,8 @@ class PostPage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="Delete Confirmation"
         >
-          <h2>Are you sure you want to delete this {this.state.typeOfModal}?</h2>
-          <button onClick={((this.state.typeOfModal === 'post') ? this.deletePost : this.deleteComment)}>Yes</button>
+          <h2>Are you sure you want to delete this post?</h2>
+          <button onClick={this.deletePost}>Yes</button>
           <button onClick={this.closeModal}>No</button>
         </Modal>
       </div>
