@@ -11,6 +11,7 @@ const CommentSchema = new mongoose.Schema({
     up: {type: Number, default: 0},
     down: {type: Number, default: 0}
   },
+  replies: [],
   dateCreated: String
 })
 

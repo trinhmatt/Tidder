@@ -148,7 +148,7 @@ router.post('/register', (req, res) => {
 })
 
 //Send message
-router.post('/api/message/:sender/:receiver', (req, res) => {
+router.post('/api/message/:receiver', (req, res) => {
   User.findOne({username: req.params.receiver}, (err, receiver) => {
     if (err) {
       res.status(500).send(err)

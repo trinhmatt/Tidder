@@ -26,86 +26,90 @@ class SubHome extends React.Component {
   componentDidMount() {
     axios.post(`/t/${this.props.match.params.sub}`)
       .then( (response) => {
-        const subData = response.data;
-        let isSubbed = false;
-        let blockAccess = false;
-        let showPass = false;
-        let isAdmin = false;
-        let isMod = false;
+        if (response.data.sub.posts) {
+          const subData = response.data;
+          let isSubbed = false;
+          let blockAccess = false;
+          let showPass = false;
+          let isAdmin = false;
+          let isMod = false;
 
-        if (!subData.sub._id) {
-          this.props.history.push('/404')
-        } else {
-          let allPosts = [];
+          if (!subData.sub._id) {
+            this.props.history.push('/404')
+          } else {
+            let allPosts = [];
 
-          subData.sub.posts.sort( (a, b) => (b.votes.up - b.votes.down) - (a.votes.up - a.votes.down));;
+            subData.sub.posts.sort( (a, b) => (b.votes.up - b.votes.down) - (a.votes.up - a.votes.down));;
 
-          //I can probably do all these checks on the backend
-          //TO DO: move all this to serverside
-          if (subData.isSubbed) {
-            isSubbed = true;
-          }
-
-          for (let n = 0; n<subData.sub.mods.length; n++) {
-            if (subData.sub.mods[n] === this.props.auth.username) {
+            //I can probably do all these checks on the backend
+            //TO DO: move all this to serverside
+            if (subData.isSubbed) {
               isSubbed = true;
-              isMod = true;
-              break;
             }
-          }
 
-          if (subData.sub.isPrivate && !isSubbed) {
-            blockAccess = true;
-          }
-
-          if (subData.sub.admin === this.props.auth.id) {
-            isAdmin = true;
-          }
-
-          if (isAdmin && subData.sub.isPrivate) {
-            showPass = true;
-          }
-
-          //Set up posts for render
-          for (let i = 0; i<subData.sub.posts.length; i++) {
-            let post;
-            let isBlocked;
-
-            if (subData.sub.blockedUsers[this.props.auth.id]) {
-              post = (
-                <PostDiv
-                  key={i}
-                  postData={subData.sub.posts[i]}
-                  isBlocked={true}
-                  match={this.props.match}
-                />
-              )
-            } else {
-              post = (
-                <PostDiv
-                  key={i}
-                  postData={subData.sub.posts[i]}
-                  isBlocked={false}
-                  match={this.props.match}
-                />
-              )
+            for (let n = 0; n<subData.sub.mods.length; n++) {
+              if (subData.sub.mods[n] === this.props.auth.username) {
+                isSubbed = true;
+                isMod = true;
+                break;
+              }
             }
-            allPosts.push(post)
-          }
 
-          // Generate create links needs to be called after subData is set
-          this.setState( () => ({
-            subData: subData.sub,
-            allPosts,
-            isSubbed,
-            blockAccess,
-            showPass,
-            isAdmin,
-            isMod
-          }), this.generateCreateLinks)
+            if (subData.sub.isPrivate && !isSubbed) {
+              blockAccess = true;
+            }
+
+            if (subData.sub.admin === this.props.auth.id) {
+              isAdmin = true;
+            }
+
+            if (isAdmin && subData.sub.isPrivate) {
+              showPass = true;
+            }
+
+            //Set up posts for render
+            for (let i = 0; i<subData.sub.posts.length; i++) {
+              let post;
+              let isBlocked;
+
+              if (subData.sub.blockedUsers[this.props.auth.id]) {
+                post = (
+                  <PostDiv
+                    key={i}
+                    postData={subData.sub.posts[i]}
+                    isBlocked={true}
+                    match={this.props.match}
+                  />
+                )
+              } else {
+                post = (
+                  <PostDiv
+                    key={i}
+                    postData={subData.sub.posts[i]}
+                    isBlocked={false}
+                    match={this.props.match}
+                  />
+                )
+              }
+              allPosts.push(post)
+            }
+
+            // Generate create links needs to be called after subData is set
+            this.setState( () => ({
+              subData: subData.sub,
+              allPosts,
+              isSubbed,
+              blockAccess,
+              showPass,
+              isAdmin,
+              isMod
+            }), this.generateCreateLinks)
+          }
+        } else {
+          this.props.history.push('/404')
         }
       })
-      .catch( () => console.log('could not get sub data'))
+      .catch( () => this.props.history.push('/404'))
   }
   subscribeToSub = () => {
     axios.post(`/subscribe/${this.props.auth.id}`, this.state.subData)

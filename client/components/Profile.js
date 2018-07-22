@@ -82,10 +82,11 @@ class Profile extends React.Component {
 
     const message = {
       message: this.state.message,
-      timestamp: moment().format("MMMM Do YYYY, h:mm:ss a")
+      timestamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
+      type: 'user'
     };
 
-    axios.post(`/api/message/${this.props.auth.id}/${this.props.match.params.username}`, message)
+    axios.post(`/api/message/${this.props.match.params.username}`, message)
       .then( (response) => this.setState( () => ({messageStatus: 'Message sent!'})))
       .catch( (err) => this.setState( () => ({messageStatus: 'An error occurred, please try again.'})))
   }

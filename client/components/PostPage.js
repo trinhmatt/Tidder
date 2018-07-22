@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 import Modal from 'react-modal'
 import moment from 'moment'
+import Comment from './Comment'
 
 class PostPage extends React.Component {
   constructor(props) {
@@ -39,20 +40,13 @@ class PostPage extends React.Component {
           const displayDifference = postMoment.from(currentMoment)
 
           const commentDiv = (
-            <div key={i}>
-              <div>
-                <button id='up-comment' onClick={this.commentVote}>Upvote</button>
-                <button id='down-comment' onClick={this.commentVote}>Downvote</button>
-                { (response.data.post.comments[i].author === this.props.auth.username) ? (
-                  <div id={response.data.post.comments[i]._id}>
-                    <button onClick={this.openModal}>Delete</button>
-                    <button onClick={this.editComment}>Edit</button>
-                  </div>
-                ) : '' }
-              </div>
-              <p>{response.data.post.comments[i].body}</p>
-              <p>Submitted by {response.data.post.comments[i].author} {displayDifference}</p>
-            </div>
+            <Comment
+              key={i}
+              auth={this.props.auth}
+              commentData={response.data.post.comments[i]}
+              displayDifference={displayDifference}
+              location={this.props.location}
+            />
           )
           allComments.push(commentDiv)
         }
@@ -96,6 +90,7 @@ class PostPage extends React.Component {
       post: {},
       author: this.props.auth.username,
       votes: {up: 0, down: 0},
+      replies: [],
       dateCreated: moment().format('MMMM Do YYYY, h:mm:ss a')
     }
 
@@ -140,32 +135,6 @@ class PostPage extends React.Component {
       })
       .catch( (error) => {
         console.log(error.response)
-        this.setState( () => ({message: 'Something went wrong'}))
-      })
-  }
-  commentVote = (e) => {
-    let vote;
-    const commentId = e.target.parentNode.id
-
-    if (e.target.id === 'up-comment') {
-      vote = 1
-    } else {
-      vote = -1
-    }
-
-    axios.post(`${this.props.location.pathname}/comment`, {
-      vote: vote,
-      user: this.props.auth.id,
-      comment: commentId
-    })
-      .then( (response) => {
-        if (response.data === 'Error') {
-          this.setState( () => ({message: 'Something went wrong'}))
-        } else {
-          this.setState( () => ({message: 'Vote succesful'}))
-        }
-      })
-      .catch( () => {
         this.setState( () => ({message: 'Something went wrong'}))
       })
   }

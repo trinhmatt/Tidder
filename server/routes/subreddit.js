@@ -31,7 +31,7 @@ router.post('/t/:sub', (req, res) => {
         res.send(subData)
       }
     } else {
-      console.log(err)
+      res.send(null)
     }
   })
 })
