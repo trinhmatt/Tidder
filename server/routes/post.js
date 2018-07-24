@@ -99,7 +99,10 @@ router.post('/t/:sub/:postID', (req, res) => {
     if (err) {
       res.status(404).send({message: 'Error occured', error: err})
     } else {
-      Post.findOne({_id: req.params.postID}).populate('comments').exec( (err, post) => {
+      Post.findOne({_id: req.params.postID}).populate({
+        path: 'comments',
+        populate: { path: 'replies' }
+      }).exec( (err, post) => {
         if (err) {
           res.send('Oops! Something happened, please try again or check the URL')
         } else {

@@ -58,6 +58,24 @@ router.delete('/t/:sub/:postID/comment/delete', (req, res) => {
   })
 })
 
+router.post('/:commentID/reply', (req, res) => {
+  Comment.findOne({_id: req.params.commentID}, (err, foundComment) => {
+    if (err) {
+      res.status(404).send('Could not find original comment')
+    } else {
+      Comment.create(req.body.reply, (err, newReply) => {
+        if (err) {
+          res.status(500).send('Could not create new comment')
+        } else {
+          foundComment.replies.push(newReply)
+          foundComment.save()
+          res.send('Success')
+        }
+      })
+    }
+  })
+})
+
 //To vote on a comment
 router.post('/:postID/vote', (req, res) => {
   Comment.findOne({_id: req.body.comment}, (err, comment) => {

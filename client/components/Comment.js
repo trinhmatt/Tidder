@@ -1,13 +1,16 @@
 import React from 'react'
 import axios from 'axios'
 import Modal from 'react-modal'
+import moment from 'moment'
 
 class Comment extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      isModalOpen: false
+      isModalOpen: false,
+      commentReply: '',
+      allReplies: []
     }
   }
   openCommentReply = (e) => {
@@ -24,7 +27,18 @@ class Comment extends React.Component {
   submitReply = (e) => {
     e.preventDefault();
 
-    console.log(e.target.value)
+    const reply = {reply: {
+      body: this.state.commentReply,
+      post: this.props.commentData.post,
+      author: this.props.auth.username,
+      votes: {up: 0, down: 0},
+      replies: [],
+      dateCreated: moment().format('MMMM Do YYYY, h:mm:ss a')
+    }}
+
+    axios.post(`/${this.props.commentData._id}/reply`, reply)
+      .then( (response) => console.log(response.data))
+      .catch( (error) => console.log(error))
   }
   openModal = () => {
     this.setState( () => ({isModalOpen: true}))
@@ -77,14 +91,17 @@ class Comment extends React.Component {
         <div>
           <button id='up-comment' onClick={this.commentVote}>Upvote</button>
           <button id='down-comment' onClick={this.commentVote}>Downvote</button>
-          { (this.props.commentData.author === this.props.auth.username) ? (
+          { (this.props.commentData.author === this.props.auth.username) && (
             <div id={this.props.commentData._id}>
               <button onClick={this.openModal}>Delete</button>
               <button onClick={this.editComment}>Edit</button>
             </div>
-          ) : '' }
+          )}
         </div>
         <p>{this.props.commentData.body}</p>
+        <div>
+          {this.props.replies}
+        </div>
         <p>Submitted by {this.props.commentData.author} {this.props.displayDifference}</p>
         {this.props.auth.id &&
           <div>

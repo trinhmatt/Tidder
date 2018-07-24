@@ -31,26 +31,46 @@ class PostPage extends React.Component {
 
     axios.post(`${this.props.location.pathname}`)
       .then( (response) => {
+        //Need this to tell user when/how long ago the post/comment was submitted
+        const currentMoment = moment();
+        const postMoment = moment(response.data.post.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
+        const postMomentDiff = postMoment.from(currentMoment);
+
         for (let i = 0; i<response.data.post.comments.length; i++) {
 
           //Compare the submission date with the current date
-          const postMoment = moment(response.data.post.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
-          const currentMoment = moment();
+          const commentMoment = moment(response.data.post.comments[i].dateCreated, 'MMMM Do YYYY, h:mm:ss a')
+          const displayDifference = commentMoment.from(currentMoment)
 
-          const displayDifference = postMoment.from(currentMoment)
+          let replies = [];
+
+          for (let x = 0; x<response.data.post.comments[i].replies.length; x++) {
+            replies.push(
+              <Comment
+                key={response.data.post.comments[i].replies[x]._id}
+                auth={this.props.auth}
+                commentData={response.data.post.comments[i].replies[x]}
+                displayDifference={displayDifference}
+                location={this.props.location}
+                history={this.props.history}
+              />)
+          }
 
           const commentDiv = (
             <Comment
-              key={i}
+              key={response.data.post.comments[i]._id}
               auth={this.props.auth}
               commentData={response.data.post.comments[i]}
               displayDifference={displayDifference}
               location={this.props.location}
               history={this.props.history}
+              replies={replies}
             />
           )
           allComments.push(commentDiv)
         }
+
+
 
         if (response.data.post.author === this.props.auth.username) {
           isAuthor = true;
@@ -72,10 +92,11 @@ class PostPage extends React.Component {
           isAuthor,
           isMod,
           isAdmin,
+          postMomentDiff,
           blockedUsers: response.data.blockedUsers
         }))
       })
-      .catch( (error) => console.log(error.response))
+      .catch( (error) => console.log(error))
 
   }
   onCommentChange = (e) => {
@@ -169,6 +190,7 @@ class PostPage extends React.Component {
         <h1>
           {this.props.location.state ? this.props.location.state.title : this.state.postData.title}
         </h1>
+        {this.state.postData && <p>Submitted {this.state.postMomentDiff} by {this.state.postData.author}</p>}
         {
           (this.state.isAuthor || this.state.isAdmin || this.state.isMod) &&
           <button id='post-delete' onClick={this.openModal}>Delete post</button>
