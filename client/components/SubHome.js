@@ -33,6 +33,7 @@ class SubHome extends React.Component {
           let showPass = false;
           let isAdmin = false;
           let isMod = false;
+          let ageCheck = false;
 
           if (!subData.sub._id) {
             this.props.history.push('/404')
@@ -57,6 +58,10 @@ class SubHome extends React.Component {
 
             if (subData.sub.isPrivate && !isSubbed) {
               blockAccess = true;
+            }
+
+            if (subData.sub.ageRestricted && !this.props.auth.id) {
+              ageCheck = true;
             }
 
             if (subData.sub.admin === this.props.auth.id) {
@@ -102,7 +107,8 @@ class SubHome extends React.Component {
               blockAccess,
               showPass,
               isAdmin,
-              isMod
+              isMod,
+              ageCheck
             }), this.generateCreateLinks)
           }
         } else {
@@ -254,6 +260,9 @@ class SubHome extends React.Component {
         this.setState( () => ({modalMessage}))
       })
   }
+  ageCheckClose = () => {
+    this.setState( () => ({ageCheck: false}))
+  }
   onBlockUserChange = (e) => {
     const blockedUser = e.target.value;
 
@@ -312,6 +321,17 @@ class SubHome extends React.Component {
   render() {
     return (
       <div>
+        <Modal
+          isOpen={this.state.ageCheck}
+          onRequestClose={this.state.ageCheckClose}
+        >
+          <h1>This is an age restricted community.</h1>
+          <h2>Are you at least 18 years old?</h2>
+          <button onClick={this.ageCheckClose}>Yes</button>
+          <button onClick={ () => {
+            this.props.history.push('/')
+          }}>No</button>
+        </Modal>
         { this.state.blockAccess ?
           <div>
             <h1>This is a private community</h1>
