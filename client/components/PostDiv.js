@@ -15,15 +15,6 @@ class PostDiv extends React.Component {
     }
   }
   componentDidMount() {
-    //Set the link of the post title to the content if it is not a text post
-    if (this.props.postData.postType.indexOf('text') < 0) {
-      this.setState( () => ({
-        pathname: this.props.postData.link,
-        votes: (this.props.postData.votes.up + this.props.postData.votes.down)
-      }))
-    } else {
-      this.setState( () => ({votes: (this.props.postData.votes.up + this.props.postData.votes.down)}))
-    }
 
     //Compare the submission date with the current date
     const postMoment = moment(this.props.postData.dateCreated, 'MMMM Do YYYY, h:mm:ss a');
@@ -44,7 +35,11 @@ class PostDiv extends React.Component {
     }
 
 
-    this.setState( () => ({displayDifference, saved}))
+    this.setState( () => ({
+      displayDifference,
+      saved,
+      votes: (this.props.postData.votes.up + this.props.postData.votes.down)}
+    ))
 
   }
   onVoteClick = (e) => {
@@ -109,16 +104,23 @@ class PostDiv extends React.Component {
           <button onClick={this.onVoteClick}>Downvote</button>
         </div>
         <p>Votes: {this.state.votes}</p>
-        <Link
-          to={{
-            pathname: this.state.pathname,
-            state: {
-              title: this.props.postData.title,
-              body: this.props.postData.body,
-              author: this.props.postData.author
-            }
-          }}>{this.props.postData.title}
-        </Link>
+        {/* If the post is a video or picture, the link should go directly to the source */
+          (this.props.postData.postType === 'picture' ||
+          this.props.postData.postType === 'video') ?
+          <a href={`${this.props.postData.link}`}>
+            {this.props.postData.title}
+          </a> :
+          <Link
+            to={{
+              pathname: this.state.pathname,
+              state: {
+                title: this.props.postData.title,
+                body: this.props.postData.body,
+                author: this.props.postData.author
+              }
+            }}>{this.props.postData.title}
+          </Link>
+        }
         <div>
           <Link
             to={{
